@@ -93,7 +93,7 @@
 module chaos_automaton #(
     parameter XSIZE = 20,		// Number of cells left to right
     parameter YSIZE = 20,		// Number of cells top to bottom
-    parameter ASIZE = 8,		// Enough bits to count XSIZE * YSIZE
+    parameter ASIZE = 9,		// Enough bits to count XSIZE * YSIZE
     parameter BASE_ADR = 32'h 3000_0000 // Wishbone base address
 )(
 `ifdef USE_POWER_PINS
@@ -145,17 +145,17 @@ module chaos_automaton #(
 `define ADDRESS	8'h08		/* Address offset of cell address value */
 `define XFER	8'h0c		/* Address offset of transfer bits */
 
-`define MAXADDR (XSIZE * YSIZE - 1)	/* Highest cell address */
+`define MAXADDR (XSIZE * YSIZE)	/* Highest cell address plus one */
 
     reg clk;			/* serial clock to transfer data 	*/
     reg hold;			/* trigger to hold transferred data 	*/
-    reg [1:0] xfer_state;	/* state of the data transfer		*/
+    reg [2:0] xfer_state;	/* state of the data transfer		*/
     reg [1:0] xfer_ctrl;	/* Transfer trigger bits		*/
     reg [63:0] config_data;	/* 64 bits to read or write		*/
 
     reg [ASIZE - 1:0] cell_addr;	/* Core cell to address	*/
     reg [ASIZE - 1:0] cell_offset;	/* Current offset of shift register */
-    reg [ASIZE + 5:0] bit_count;	/* Full count (cell address + bits) */
+    reg [ASIZE + 6:0] bit_count;	/* Full count (cell address + bits) */
 
     wire [`MPRJ_IO_PADS-1:0] io_in;
     wire [`MPRJ_IO_PADS-1:0] io_out;
@@ -175,7 +175,6 @@ module chaos_automaton #(
     reg [31:0] wbs_dat_o;
     reg [63:0] wdata;
     reg write;
-    reg prewrite;
 
     wire [2*XSIZE + 2*YSIZE - 1: 0] data_in;
 
@@ -238,25 +237,25 @@ module chaos_automaton #(
 	    assign data_in[i] = la_data_in[i];
 	end
 	for (i = 2 * YSIZE + XSIZE; i < 2*YSIZE + XSIZE + 9; i=i+1) begin
-    	    assign data_in[i] = la_oenb[i] ? la_data_in[i] : io_in[i - 2*YSIZE + XSIZE + 29];
+    	    assign data_in[i] = la_oenb[i] ? io_in[i - 2*YSIZE + XSIZE + 29] : la_data_in[i];
 	end
 	for (i = 2 * YSIZE + 9; i < 2 * YSIZE + XSIZE; i=i+1) begin
 	    assign data_in[i] = la_data_in[i];
 	end
 	for (i = 2 * YSIZE; i < 2 * YSIZE + 9; i=i+1) begin
-    	    assign data_in[i] = la_oenb[i] ? la_data_in[i] : io_in[i - 2*YSIZE + 20];
+    	    assign data_in[i] = la_oenb[i] ? io_in[i - 2*YSIZE + 20] : la_data_in[i];
 	end
 	for (i = YSIZE + 10; i < 2 * YSIZE; i=i+1) begin
 	    assign data_in[i] = la_data_in[i];
 	end
 	for (i = YSIZE; i < YSIZE + 10; i=i+1) begin
-    	    assign data_in[i] = la_oenb[i] ? la_data_in[i] : io_in[i - YSIZE + 10];
+    	    assign data_in[i] = la_oenb[i] ? io_in[i - YSIZE + 10] : la_data_in[i];
 	end
 	for (i = 10; i < YSIZE; i=i+1) begin
 	    assign data_in[i] = la_data_in[i];
 	end
 	for (i = 0; i < 10; i=i+1) begin
-    	    assign data_in[i] = la_oenb[i] ? la_data_in[i] : io_in[i];
+    	    assign data_in[i] = la_oenb[i] ? io_in[i]: la_data_in[i];
 	end
     endgenerate
 
@@ -273,7 +272,7 @@ module chaos_automaton #(
 	end else if (address_sel) begin
 	    /* When ADDRESS is selected, pass back the existing cell	*/
 	    /* count rather than what was written into cell_addr.	*/
-	    rdata_pre = bit_count[ASIZE + 5: 6];
+	    rdata_pre = bit_count[ASIZE + 6: 7];
 	end
     end
 
@@ -300,10 +299,8 @@ module chaos_automaton #(
         if (wb_rst_i) begin
             xfer_ctrl <= 0;
 	    wdata <= 0;
-	    prewrite <= 1'b0;
 	    write <= 1'b0;
         end else begin
-	    prewrite <= 1'b0;
 	    write <= 1'b0;
             if (valid && !ready && wbs_adr_i[31:8] == BASE_ADR[31:8]) begin
                 if (xfer_sel) begin
@@ -313,13 +310,13 @@ module chaos_automaton #(
                     if (iomem_we[1]) wdata[15:8] <= wbs_dat_i[15:8];
                     if (iomem_we[2]) wdata[23:16] <= wbs_dat_i[23:16];
                     if (iomem_we[3]) wdata[31:24] <= wbs_dat_i[31:24];
-		    prewrite <= 1'b1;
+		    if (|iomem_we) write <= 1'b1;
 		end else if (config_sel[1]) begin
                     if (iomem_we[0]) wdata[39:32] <= wbs_dat_i[7:0];
                     if (iomem_we[1]) wdata[47:40] <= wbs_dat_i[15:8];
                     if (iomem_we[2]) wdata[55:48] <= wbs_dat_i[23:16];
                     if (iomem_we[3]) wdata[63:56] <= wbs_dat_i[31:24];
-		    prewrite <= 1'b1;
+		    if (|iomem_we) write <= 1'b1;
 		end else if (address_sel) begin
 		    /* NOTE:  If XSIZE * YSIZE > 256, this must be adjusted */
                     if (iomem_we[0]) cell_addr <= wbs_dat_i[7:0];
@@ -327,11 +324,6 @@ module chaos_automaton #(
             end else begin
                 xfer_ctrl <= 0;      // Immediately self-resetting
             end
-
-	    /* write data pulse follows prewrite by one cycle */
-	    if (prewrite == 1'b1) begin
-		write <= 1'b1;
-	    end
         end
     end
 
@@ -348,11 +340,11 @@ module chaos_automaton #(
 	    xfer_state <= `IDLE;
 	    bit_count <= 'd0;
 	    cell_offset <= 'd0;
-	    write <= 1'b0;
+	    clk <= 1'b0;
+	    hold <= 1'b1;
 	end else begin
 	    clk <= 1'b0;
 	    hold <= 1'b1;
-	    write <= 1'b0;
 	    if (xfer_state == `IDLE) begin
 		if (xfer_ctrl[0] == 1'b1) begin
 		    xfer_state <= `START;
@@ -360,17 +352,17 @@ module chaos_automaton #(
 		    xfer_state <= `FINISH;
 		end
 	    end else if (xfer_state == `START) begin
-		bit_count[ASIZE + 5:6] <= cell_addr;
-		bit_count[5:0] <= 6'd0;
+		bit_count[ASIZE + 6:7] <= cell_addr;
+		bit_count[6:0] <= 7'b1111110;
 		xfer_state <= `XDATAS;
 	    end else if (xfer_state == `FINISH) begin
-		bit_count[ASIZE + 5:6] <= `MAXADDR - cell_offset;
-		bit_count[5:0] <= 6'd0;
+		bit_count[ASIZE + 6:7] <= `MAXADDR - cell_offset;
+		bit_count[6:0] <= 7'b1111110;
 		xfer_state <= `XDATAF;
 	    end else if (xfer_state == `XDATAS) begin
 		clk <= ~clk;
 		bit_count <= bit_count - 1;
-		if (bit_count[5:0] == 0) begin
+		if (bit_count[6:0] == 0) begin
 		    cell_offset <= cell_offset + 1;
 		end
 		if (clk == 1'b0) begin
@@ -381,7 +373,7 @@ module chaos_automaton #(
 	    end else if (xfer_state == `XDATAF) begin
 		clk <= ~clk;
 		bit_count <= bit_count - 1;
-		if (bit_count[5:0] == 0) begin
+		if (bit_count[6:0] == 0) begin
 		    cell_offset <= cell_offset + 1;
 		end
 		if (clk == 1'b0) begin
@@ -392,6 +384,7 @@ module chaos_automaton #(
 	    end else if (xfer_state == `LOAD) begin
 		hold <= 1'b0;
 		xfer_state <= `IDLE;
+		cell_offset <= 'd0;
 	    end
 	end
     end
@@ -399,13 +392,13 @@ endmodule
 
 /*
  * Chaos automaton base cell definitions:  Map directions to
- * array indexes.
+ * array indexes, in clockwise order
  */
 
-`define NORTH 0
-`define SOUTH 1
+`define NORTH 3
 `define EAST  2
-`define WEST  3
+`define SOUTH 1
+`define WEST  0
 
 /*
  *-----------------------------------------------------------------
@@ -430,21 +423,32 @@ module chaos_cell (
 
     reg [15:0] lutfunc [3:0];	/* LUT configuration data */
     reg [15:0] lutdata [3:0];	/* Latched LUT configuration data */
-    wire [3:0] insew;
-    wire [3:0] onsew;
+    wire [3:0] inesw;
+    wire [3:0] ieswn;
+    wire [3:0] iswne;
+    wire [3:0] iwnes;
 
-    /* Gather inputs and outputs into arrays */
+    /* Gather inputsinto arrays.  There is one array per direction, so	*/
+    /* that the array is always oriented relative to the position of	*/
+    /* the output being generated.					*/
 
-    assign insew = {inorth, isouth, ieast, iwest};
-    assign onsew = {onorth, osouth, oeast, owest};
+    assign inesw = {inorth, ieast,  isouth, iwest};
+    assign ieswn = {ieast,  isouth, iwest,  inorth};
+    assign iswne = {isouth, iwest,  inorth, ieast};
+    assign iwnes = {iwest,  inorth, ieast,  isouth};
 
     /* Core functions */
     /* The four LUTs define each output as a function of the four inputs */
+    /* To do:  Make everything rotationally symmetric */
 
-    assign onorth = lutdata[`NORTH][insew];
-    assign osouth = lutdata[`SOUTH][insew];
-    assign oeast = lutdata[`EAST][insew];
-    assign owest = lutdata[`WEST][insew];
+    /* NOTE: condition of zeroing on hold == 0 is needed to make	*/
+    /* simulation run;  otherwise outputs are all X.  The system will	*/
+    /* work without it.							*/
+
+    assign onorth = (!hold) ? 0 : lutdata[`NORTH][inesw];
+    assign oeast  = (!hold) ? 0 : lutdata[`EAST][ieswn];
+    assign osouth = (!hold) ? 0 : lutdata[`SOUTH][iswne];
+    assign owest  = (!hold) ? 0 : lutdata[`WEST][iwnes];
 
     /* Inferred latches from shift register */
 
@@ -467,14 +471,14 @@ module chaos_cell (
 	    lutfunc[`WEST]  <= 16'd0;
 	end else begin
 	    lutfunc[`NORTH][15:1] <= lutfunc[`NORTH][14:0];
-	    lutfunc[`SOUTH][15:1] <= lutfunc[`SOUTH][14:0];
 	    lutfunc[`EAST][15:1]  <= lutfunc[`EAST][14:0];
+	    lutfunc[`SOUTH][15:1] <= lutfunc[`SOUTH][14:0];
 	    lutfunc[`WEST][15:1]  <= lutfunc[`WEST][14:0];
 
 	    lutfunc[`NORTH][0] <= idata;
-	    lutfunc[`SOUTH][0] <= lutfunc[`NORTH][15];
-	    lutfunc[`EAST][0] <= lutfunc[`SOUTH][15];
-	    lutfunc[`WEST][0] <= lutfunc[`EAST][15];
+	    lutfunc[`EAST][0] <= lutfunc[`NORTH][15];
+	    lutfunc[`SOUTH][0] <= lutfunc[`EAST][15];
+	    lutfunc[`WEST][0] <= lutfunc[`SOUTH][15];
 	end
     end
 
@@ -517,6 +521,28 @@ module chaos_array #(
     wire io_data_sel;		// wishbone select data
     wire xfer_sel;		// wishbone select transfer
 
+    // TEST:  Recast some shift register columns for testing;  this is
+    // easier to pull into gtkwave than a 2D array.
+    // wire [YSIZE - 1: 0] testshiftreg0 = shiftreg[0]; 
+    // wire [YSIZE - 1: 0] testshiftreg10 = shiftreg[10]; 
+    // wire [YSIZE - 1: 0] testshiftreg20 = shiftreg[20]; 
+
+    // TEST:  Recast some LUT columns for testing
+    // wire [YSIZE - 1: 0] testdconn0 = dconn[0];
+    // wire [YSIZE - 1: 0] testuconn20 = uconn[20];
+    // wire [YSIZE - 1: 0] testlconn0 = lconn[0];
+    // wire [YSIZE - 1: 0] testrconn20 = rconn[20];
+
+    // wire [YSIZE - 1: 0] testdconn1 = dconn[1];
+    // wire [YSIZE - 1: 0] testuconn19 = uconn[19];
+    // wire [YSIZE - 1: 0] testlconn1 = lconn[1];
+    // wire [YSIZE - 1: 0] testrconn19 = rconn[19];
+
+    // wire [YSIZE - 1: 0] testdconn19 = dconn[19];
+    // wire [YSIZE - 1: 0] testuconn1 = uconn[1];
+    // wire [YSIZE - 1: 0] testlconn19 = lconn[19];
+    // wire [YSIZE - 1: 0] testrconn1 = rconn[1];
+
     /* The perimeter inputs and outputs connect to the logic analyzer */
     /* (To do:  multiplex inputs between the chip I/O and logic analyzer */
 
@@ -530,19 +556,26 @@ module chaos_array #(
 
     genvar i, j;
 
+    /* NOTE:  To see the internal cell values in gtkwave, it is necessary
+     * to split out a few individual instances from the 2D array.  Loop
+     * from j = 1 in 2D generate loop, then add a 1D generate loop for
+     * i = N to XSIZE with j set to zero, then add individual instances for 
+     * i = 0 to N - 1 with j set to zero.
+     */
+
     /* Connected array of cells */
     generate
-	for (j = 0; j < YSIZE; j=j+1) begin
-	    for (i = 0; i < XSIZE; i=i+1) begin
+	for (j = 0; j < YSIZE; j=j+1) begin: celly
+	    for (i = 0; i < XSIZE; i=i+1) begin: cellx
     	        chaos_cell chaos_cell_inst (
     		    .inorth(dconn[j+1][i]),
 		    .isouth(uconn[j][i]),
-		    .ieast(rconn[i+1][j]),
-		    .iwest(lconn[i][j]),
+		    .ieast(lconn[i+1][j]),
+		    .iwest(rconn[i][j]),
 		    .onorth(uconn[j+1][i]),
 		    .osouth(dconn[j][i]),
-		    .oeast(lconn[i+1][j]),
-		    .owest(rconn[i][j]),
+		    .oeast(rconn[i+1][j]),
+		    .owest(lconn[i][j]),
 		    .clk(clk),
 		    .reset(reset),
 		    .hold(hold),
@@ -555,7 +588,7 @@ module chaos_array #(
 	/* NOTE:  This would work better topologically if each	*/
 	/* row switched the direction of the shift register.	*/
 
-	for (j = 0; j < YSIZE - 1; j=j+1) begin
+	for (j = 0; j < YSIZE - 1; j=j+1) begin: shifty
 	    assign shiftreg[0][j+1] = shiftreg[XSIZE][j];
 	end
     endgenerate
