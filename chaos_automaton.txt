@@ -1,0 +1,171 @@
+Chaos automaton verilog code description
+July 5, 2022
+
+See "chaos_automaton.v"
+Description corresponds to repository commit
+version 3bb09e932491e929d1709e9d843173a365be1982
+(May 10, 2022)
+The code itself (last code commit) is from
+version 3def96a8c8ec6e66376e22f013cd6296e57859c8
+(Aug 22, 2021)
+
+The base cell is "chaos_cell" (line 409)
+Each cell contains 64 bits memory in a serial scan chain with one register
+for the serial shift and one latch for capturing the value at the cell.
+
+Both register and latch are represented in the verilog code by 2-dimensional
+arrays;  the serial shift register is called "lutfunc" and the latched value
+is called "lutdata".
+
+The cell function is implemented at line 448:  Four functions that apply
+the latched function to outputs on all four sides of the cell.  The functions
+are mapped in such a way that for the same 16-bit value produces an output
+that is the same relative to the direction of the output;  for bit positions
+{3, 2, 1, 0}, bit 3 is the input that is in the same direction as the output,
+and if the output is oriented to the north, say, then bit 2 is the input
+coming from the east side;  bit 1 is the input coming from the south side
+(opposite direction from the output), and bit 0 is the input coming from the
+west side.
+
+The shift register is implemented at lines 464 to 485.  This defines the
+way the data snake through the 64 bits.  Data enter at lutfunc[0][0]
+(or, as defined, lutfunc[`NORTH][0]) and exit at lutfunc[3][15]
+(lutfunc[`WEST][15]).
+
+A "reset" signal zeros all registers (but does not affect the latches).
+A "hold" signal enables the latches;  therefore, a complete reset
+consists of applying "reset" followed by releasing "hold".
+
+
+The cells are formed into an array "chaos_array" defined at lines
+495 to 619.  The number of cells in the array is defined by XSIZE * YSIZE,
+defaulting to 20 and 20 (total 400 cells).  The array is created by a
+"generate" block.  Note that each cell has two pins on each side (not
+counting the serial data, clock, reset, and hold), one input and one
+output.  Therefore the wires connecting the cells together are designated
+"dconn", "uconn", "lconn", and "rconn", where the direction "d/u/l/r"
+indicates the direction of data flow.  The connections include the
+pins on the outside of the array;  so each of these wires is a 2D array
+size (X * (Y + 1)) (for uconn and dconn) or size ((X + 1) * Y) (for lconn
+and rconn).
+
+The array module defines a data "holding area" of 64 bits, which is enough
+to hold data for one cell.  This 64 bit array is called "lutdata" in cell
+chaos_array.  The ends of this array are connected to the ends of the
+"lutdata" serial registers in the array of cells, so that it forms a loop.
+So if this loop is clocked 401 * 64 (= 25664) times, then all data in the
+array returns to its original position.  The idea here is that a single
+position in the array can be reprogrammed on the fly, by clocking the loop
+until the data for the cell to be modified is in the position of the
+64-bit holding area (lutdata).  Then the cell's data can be read out (if
+needed), modified, and written back, then the shift register clocked again
+until that cell's data is once again in the correct position of that cell,
+and then all data are simultaneously latched.
+
+The holding area data can be read at any time, as its value is placed on
+the output wire array "rdata".  Data presented on module input wire array
+"wdata" can be written into the holding area if the "write" wire is high
+on the rising edge of "clk".  During a write cycle, the shift register is
+not shifted;  otherwise, the shift register is shifted by one bit for
+every rising edge of "clk".
+
+The simplified holding area read/write mechanism is mapped to the wishbone
+bus in the module "chaos_automaton".  The module defines the wishbone
+base address "BASE_ADR" as hex 30000000, which is the address assigned to
+the user project area by the Caravel processor.  Since the wishbone bus
+is 32 bits and the holding area is 64 bits, the transfer must be done
+with two wishbone word writes.  Base address + 0 ("CONFIGL") is defined as
+the address for the lower 32 bits of the holding area, and base address + 4
+("CONFIGH") is defined as the address for the upper 32 bits of the holding
+area.  Note that there is a separate 64 bit register in "chaos_automaton"
+that is copied to the holding register.  The copy is always done with all
+64 bits copied at one time.  The register in "chaos_automaton" can be
+written in 8-bit bytes or 16- or 32-bit words, depending on the data
+type used in the RISC-V code.  The wishbone read/write process is defined
+in lines 279 to 328.
+
+The copying from wishbone register to holding area (or vice versa) is
+done automatically.  The automation involves two additional wishbone
+registers, "ADDRESS" at base address + 8, and "XFER" at base address + 12.
+The transfer process is defined at lines 330 to 390.  The XFER register
+is two bits.  Bit 0 = "start" and bit 1 = "finish".  The ADDRESS is a
+cell address in the range 0 to 199 (for a 20 x 20 array).  The procedure
+is to do:
+
+	(1) Apply an address to the ADDRESS register
+	(2) Apply the "start" transfer bit to the XFER register
+
+	This causes the shift register to clock data around the
+	loop until the data from the cell at the specified address
+	is in the holding register.  At this point, the data from
+	that cell can be read via the wishbone bus from address
+	CONFIGL and CONFIGH.
+
+	(3) Write new data for the cell into CONFIGL and CONFIGH
+	(4) Apply the "finish" transfer bit to the XFER register
+
+	This causes the shift register to clock data around the
+	loop until the data in the holding register ends up at
+	the position of the cell at the specified address.
+	When shifting has completed, the "hold" bit on all
+	registers is toggled to latch the new data.  Note that
+	after "start" is applied, the number of cells shifted
+	is counted and retained;  the "finish" uses that value
+	to determine how many cycles are required to return to
+	the initial (reset) position. 
+
+So this is a two-cycle process that, without disturbing the operation
+of the automaton, rotates the data from a specific cell to the output
+and then rotates the data back around a full cycle to its original
+position, allowing the cell data to be modified between the two cycles.
+This arrangement can also be used to rotate data around one cell at a
+time for initial programming, by setting the ADDRESS to 1 and applying
+the "start" transfer bit 400 times, ending with applying the "finish"
+transfer bit to latch the data at the end (see testbench
+dv/chaos_test3/chaos_test3.c for an example of a complete load).
+
+Important note:  The cell address register "cell_addr" reads only from
+wbs_dat_i[7:0], so if XSIZE * YSIZE > 256, then this must be adjusted.
+To do:  ASIZE is set to 9, so cell_addr has 9 bits;  does ASIZE need
+to be 8?  Else might as well add the additional bits before line 322.
+
+Lastly, the system has to have input/output.  It is not clear how best
+to connect inputs and outputs of the chaos_automaton.  The simplest
+solution is to connect the periphery of the cell array to the GPIO
+pins.  But even a small (-ish) array like 20x20 has 80 inputs and 80
+outputs, and there are only 38 GPIO pins available total.  And it
+would be nice to be able to capture the internal state of the
+system at any time (with the known caveat that the internal state is
+asynchronous, so difficult to get a meaningful data capture if there
+are oscillating inner states).  There *are* 128 full-duplex input/
+output signals on the logic analyzer---but those are clocked on the
+CPU core clock, and so they too cannot capture the exact state of an
+asynchronous signal or apply an asynchronous inputs.  Inevitably,
+some compromises will have to be made.
+
+The array I/O is the vectors data_in[] and data_out[] in chaos_array,
+mapped to the endpoints of the uconn, dconn, rconn, and lconn arrays.
+Both arrays are divided into four sets of bits in this order:
+	high bits	....	low bits
+	left	right	up	down
+	
+The "compromising" happens at the level of module chaos_automaton.
+Line 195 defines how the array outputs connect to the 38 chip GPIO
+pins:  Contiguous sets of 9, 9, 10, and 10 bits from north, south,
+east, and west, respectively (question:  should these, and the data_in
+and data_out arrays, be in a clockwise order instead?).
+
+The rest of the connections are made in a "generate" block at lines
+233 to 260.  The logic analyzer controls the direction of the data,
+and whether the data is passed to and from the logic analyzer or to
+and from the GPIO pins (where they are connected).  So the choice of
+having I/O connected to the logic analyzer or GPIO pin can be made
+on a per-pin basis.  The array inputs and outputs which do not connect
+to the GPIO connect only to the logic analyzer.
+
+Comment:  The arrangement of mapping GPIO bits to the array is pretty
+arbitrary;  I think it would be useful maybe to allow some alternative
+schemes, such as connecting the GPIO bits to every other (almost)
+array I/O, and/or to map the GPIO to the upper bank of array I/O
+instead of the lower bank, based on some register setting.
+

@@ -91,8 +91,8 @@
  */
 
 module chaos_automaton #(
-    parameter XSIZE = 20,		// Number of cells left to right
-    parameter YSIZE = 20,		// Number of cells top to bottom
+    parameter XSIZE = 10,		// Number of cells left to right
+    parameter YSIZE = 10,		// Number of cells top to bottom
     parameter ASIZE = 9,		// Enough bits to count XSIZE * YSIZE
     parameter BASE_ADR = 32'h 3000_0000 // Wishbone base address
 )(
