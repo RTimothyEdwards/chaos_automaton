@@ -39,7 +39,7 @@ set ::env(DIE_AREA) "0 0 900 600"
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 
 set ::env(PL_BASIC_PLACEMENT) 0
-set ::env(PL_TARGET_DENSITY) 0.5
+set ::env(PL_TARGET_DENSITY) 0.48
 
 set ::env(SYNTH_EXTRA_MAPPING_FILE) $script_dir/yosys_mapping.v
 set ::env(SYNTH_MAX_FANOUT) 12
