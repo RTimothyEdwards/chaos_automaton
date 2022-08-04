@@ -18,15 +18,15 @@ set ::env(STD_CELL_LIBRARY) "sky130_fd_sc_hd"
 
 set script_dir [file dirname [file normalize [info script]]]
 
-set ::env(DESIGN_NAME) chaos_automaton
+set ::env(DESIGN_NAME) chaos_subarray
 
 set ::env(VERILOG_FILES) "\
 	$::env(CARAVEL_ROOT)/verilog/rtl/defines.v \
-	$script_dir/../../verilog/rtl/chaos_automaton.v"
+	$script_dir/../../verilog/rtl/chaos_subarray.v"
 
 set ::env(DESIGN_IS_CORE) 0
 
-set ::env(CLOCK_PORT) "wb_clk_i"
+set ::env(CLOCK_PORT) "iclk"
 set ::env(CLOCK_NET) "counter.clk"
 set ::env(CLOCK_PERIOD) "25"
 # 25 ns is 40 MHz
@@ -43,7 +43,7 @@ set ::env(PL_TARGET_DENSITY) 0.49
 
 set ::env(SYNTH_EXTRA_MAPPING_FILE) $script_dir/yosys_mapping.v
 set ::env(SYNTH_MAX_FANOUT) 12
-set ::env(BASE_SDC_FILE) $script_dir/base.sdc
+# set ::env(BASE_SDC_FILE) $script_dir/base.sdc
 
 # Maximum layer used for routing is metal 4.
 # This is because this macro will be inserted in a top level (user_project_wrapper) 
