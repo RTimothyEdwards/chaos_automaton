@@ -1,7 +1,7 @@
 magic
 tech sky130B
 magscale 1 2
-timestamp 1659631986
+timestamp 1659633024
 << obsli1 >>
 rect 1104 2159 178848 177361
 << obsm1 >>
@@ -414,8 +414,8 @@ port 88 nsew ground bidirectional
 string FIXED_BBOX 0 0 180000 180000
 string LEFclass BLOCK
 string LEFview TRUE
-string GDS_END 38812834
-string GDS_FILE /home/alex/chaos_automaton_Summer_2022/openlane/chaos_subarray/runs/22_08_04_12_46/results/signoff/chaos_subarray.magic.gds
+string GDS_END 38801798
+string GDS_FILE /home/alex/chaos_automaton_Summer_2022/openlane/chaos_subarray/runs/22_08_04_13_04/results/signoff/chaos_subarray.magic.gds
 string GDS_START 141920
 << end >>
 

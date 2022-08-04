@@ -43,7 +43,7 @@ set ::env(PL_TARGET_DENSITY) 0.49
 
 set ::env(SYNTH_EXTRA_MAPPING_FILE) $script_dir/yosys_mapping.v
 set ::env(SYNTH_MAX_FANOUT) 12
-# set ::env(BASE_SDC_FILE) $script_dir/base.sdc
+set ::env(BASE_SDC_FILE) $script_dir/base.sdc
 
 # Maximum layer used for routing is metal 4.
 # This is because this macro will be inserted in a top level (user_project_wrapper) 
