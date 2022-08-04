@@ -1,7 +1,7 @@
 magic
 tech sky130B
 magscale 1 2
-timestamp 1659573274
+timestamp 1659628246
 << obsli1 >>
 rect 1104 2159 178848 177361
 << obsm1 >>
@@ -2584,7 +2584,7 @@ string FIXED_BBOX 0 0 180000 180000
 string LEFclass BLOCK
 string LEFview TRUE
 string GDS_END 76943692
-string GDS_FILE /home/alex/chaos_automaton_Summer_2022/openlane/chaos_automaton/runs/22_08_03_20_14/results/signoff/chaos_automaton.magic.gds
+string GDS_FILE /home/alex/chaos_automaton_Summer_2022/openlane/chaos_subarray/runs/22_08_04_11_30/results/signoff/chaos_automaton.magic.gds
 string GDS_START 1385826
 << end >>
 
