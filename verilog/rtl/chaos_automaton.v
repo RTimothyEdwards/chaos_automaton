@@ -13,6 +13,9 @@
 // limitations under the License.
 // SPDX-License-Identifier: Apache-2.0
 
+// NOTE:  Remove the following line before synthesizing
+// `define MPRJ_IO_PADS 38
+
 `default_nettype none
 /*
  *-------------------------------------------------------------
@@ -81,8 +84,13 @@
  * the cell address, (2) Apply the shift cycle, (3) Read the configuration
  * data, (4) Apply the finish cycle.
  *
+ *
+ * This version uses the chaos_subarray, which is intended to be
+ * prehardened as a macro and tiled in the top level.
  *-------------------------------------------------------------
  */
+
+`include "chaos_subarray.v"
 
 /*
  *-----------------------------------------------------------------
@@ -91,9 +99,11 @@
  */
 
 module chaos_automaton #(
-    parameter XSIZE = 10,		// Number of cells left to right
-    parameter YSIZE = 10,		// Number of cells top to bottom
-    parameter ASIZE = 9,		// Enough bits to count XSIZE * YSIZE
+    parameter XSIZE = 30,	// Total number of cells left to right
+    parameter YSIZE = 30,	// Total number of cells top to bottom
+    parameter XTOP = 3,		// Number of sub-arrays left to right
+    parameter YTOP = 3,		// Number of sub-arrays top to bottom
+    parameter ASIZE = 10,	// Enough bits to count XSIZE * YSIZE
     parameter BASE_ADR = 32'h 3000_0000 // Wishbone base address
 )(
 `ifdef USE_POWER_PINS
@@ -208,6 +218,8 @@ module chaos_automaton #(
     chaos_array #(
         .XSIZE(XSIZE),
         .YSIZE(YSIZE),
+        .XTOP(XTOP),
+        .YTOP(YTOP),
 	.BASE_ADR(BASE_ADR)
     ) chaos_array_inst (
 	`ifdef USE_POWER_PINS
@@ -391,110 +403,16 @@ module chaos_automaton #(
 endmodule
 
 /*
- * Chaos automaton base cell definitions:  Map directions to
- * array indexes, in clockwise order
- */
-
-`define NORTH 3
-`define EAST  2
-`define SOUTH 1
-`define WEST  0
-
-/*
- *-----------------------------------------------------------------
- * Chaos base cell (four 4-input LUTs + data load circuitry)
- *-----------------------------------------------------------------
- */
-
-module chaos_cell (
-`ifdef USE_POWER_PINS
-    inout vccd1,	// User area 1 1.8V supply
-    inout vssd1,	// User area 1 digital ground
-`endif
-
-    input inorth, isouth, ieast, iwest,
-    output onorth, osouth, oeast, owest,
-    input clk,			/* Serial load clock */
-    input reset,		/* System reset */
-    input hold,			/* Data latch signal */
-    input idata,		/* Shift register input */
-    output odata 		/* Shift register output */
-);
-
-    reg [15:0] lutfunc [3:0];	/* LUT configuration data */
-    reg [15:0] lutdata [3:0];	/* Latched LUT configuration data */
-    wire [3:0] inesw;
-    wire [3:0] ieswn;
-    wire [3:0] iswne;
-    wire [3:0] iwnes;
-
-    /* Gather inputsinto arrays.  There is one array per direction, so	*/
-    /* that the array is always oriented relative to the position of	*/
-    /* the output being generated.					*/
-
-    assign inesw = {inorth, ieast,  isouth, iwest};
-    assign ieswn = {ieast,  isouth, iwest,  inorth};
-    assign iswne = {isouth, iwest,  inorth, ieast};
-    assign iwnes = {iwest,  inorth, ieast,  isouth};
-
-    /* Core functions */
-    /* The four LUTs define each output as a function of the four inputs */
-    /* To do:  Make everything rotationally symmetric */
-
-    /* NOTE: condition of zeroing on hold == 0 is needed to make	*/
-    /* simulation run;  otherwise outputs are all X.  The system will	*/
-    /* work without it.							*/
-
-    assign onorth = (!hold) ? 0 : lutdata[`NORTH][inesw];
-    assign oeast  = (!hold) ? 0 : lutdata[`EAST][ieswn];
-    assign osouth = (!hold) ? 0 : lutdata[`SOUTH][iswne];
-    assign owest  = (!hold) ? 0 : lutdata[`WEST][iwnes];
-
-    /* Inferred latches from shift register */
-
-    always @* begin
-	if (!hold) begin
-	    lutdata[0] = lutfunc[0];
-	    lutdata[1] = lutfunc[1];
-	    lutdata[2] = lutfunc[2];
-	    lutdata[3] = lutfunc[3];
-	end
-    end
-
-    /* Implement the shift register operation */
-
-    always @(posedge clk or posedge reset) begin
-        if (reset == 1'b1) begin
-	    lutfunc[`NORTH] <= 16'd0;
-	    lutfunc[`SOUTH] <= 16'd0;
-	    lutfunc[`EAST]  <= 16'd0;
-	    lutfunc[`WEST]  <= 16'd0;
-	end else begin
-	    lutfunc[`NORTH][15:1] <= lutfunc[`NORTH][14:0];
-	    lutfunc[`EAST][15:1]  <= lutfunc[`EAST][14:0];
-	    lutfunc[`SOUTH][15:1] <= lutfunc[`SOUTH][14:0];
-	    lutfunc[`WEST][15:1]  <= lutfunc[`WEST][14:0];
-
-	    lutfunc[`NORTH][0] <= idata;
-	    lutfunc[`EAST][0] <= lutfunc[`NORTH][15];
-	    lutfunc[`SOUTH][0] <= lutfunc[`EAST][15];
-	    lutfunc[`WEST][0] <= lutfunc[`SOUTH][15];
-	end
-    end
-
-    assign odata = lutfunc[`WEST][15];
-
-endmodule
-
-/*
  *-----------------------------------------------------------------
  * Chaos array (XSIZE * YSIZE)
  *-----------------------------------------------------------------
  */
 
 module chaos_array #(
-    parameter XSIZE = 20,
-    parameter YSIZE = 20,
+    parameter XSIZE = 30,   /* Total number of cells in X */
+    parameter YSIZE = 30,   /* Total number of cells in Y */
+    parameter XTOP = 3,	    /* Number of sub-arrays in X */
+    parameter YTOP = 3,	    /* Number of sub-arrays in Y */
     parameter BASE_ADR = 32'h3000_0000
 )(
 `ifdef USE_POWER_PINS
@@ -508,51 +426,71 @@ module chaos_array #(
     input write,
     input [63:0] wdata,
     output [63:0] rdata,
-    input  [2*XSIZE + 2*YSIZE - 1:0] data_in,
-    output [2*XSIZE + 2*YSIZE - 1:0] data_out
+    input  [2*XSIZE + 2*YSIZE - 1:0] data_in,	// Perimeter I/O
+    output [2*XSIZE + 2*YSIZE - 1:0] data_out	// Perimeter I/O
 );
-    wire [XSIZE - 1: 0] uconn [YSIZE: 0];
-    wire [XSIZE - 1: 0] dconn [YSIZE: 0];
-    wire [YSIZE - 1: 0] rconn [XSIZE: 0];
-    wire [YSIZE - 1: 0] lconn [XSIZE: 0];
+    wire [XSIZE - 1: 0] uconn [YTOP: 0];
+    wire [XSIZE - 1: 0] dconn [YTOP: 0];
+    wire [YSIZE - 1: 0] rconn [XTOP: 0];
+    wire [YSIZE - 1: 0] lconn [XTOP: 0];
 
-    wire [YSIZE - 1: 0] shiftreg [XSIZE: 0];
+    wire [YTOP - 1: 0] shiftreg [XTOP: 0];
+    wire [YTOP - 1: 0] clkarray [XTOP: 0];
 
     wire io_data_sel;		// wishbone select data
     wire xfer_sel;		// wishbone select transfer
 
-    // TEST:  Recast some shift register columns for testing;  this is
-    // easier to pull into gtkwave than a 2D array.
-    // wire [YSIZE - 1: 0] testshiftreg0 = shiftreg[0]; 
-    // wire [YSIZE - 1: 0] testshiftreg10 = shiftreg[10]; 
-    // wire [YSIZE - 1: 0] testshiftreg20 = shiftreg[20]; 
+    assign clkarray[0][0] = clk;
 
-    // TEST:  Recast some LUT columns for testing
-    // wire [YSIZE - 1: 0] testdconn0 = dconn[0];
-    // wire [YSIZE - 1: 0] testuconn20 = uconn[20];
-    // wire [YSIZE - 1: 0] testlconn0 = lconn[0];
-    // wire [YSIZE - 1: 0] testrconn20 = rconn[20];
+    // Sub-array architecture:
+    //
+    //       dudu      dudu      dudu
+    //       |^|^      |^|^      |^|^   
+    //       v|v|      v|v|      v|v|   
+    //     +------+  +------+  +------+
+    //  l->|      |->|      |->|      |->l
+    //  r<-|      |<-|      |<-|      |<-r
+    //  l->|      |->|      |->|      |->l
+    //  r<-|      |<-|      |<-|      |<-r
+    //     +------+  +------+  +------+
+    //       |^|^      |^|^      |^|^   
+    //       v|v|      v|v|      v|v|   
+    //     +------+  +------+  +------+
+    //  l->|      |->|      |->|      |->l
+    //  r<-|      |<-|      |<-|      |<-r
+    //  l->|      |->|      |->|      |->l
+    //  r<-|      |<-|      |<-|      |<-r
+    //     +------+  +------+  +------+
+    //       |^|^      |^|^      |^|^   
+    //       v|v|      v|v|      v|v|   
+    //       dudu      dudu      dudu
+    //
+    // Each box in the above diagram is a sub-array size 2x2.
+    // The top level has XSIZE = 6, YSIZE = 4 with XTOP = 3
+    // and YTOP = 2.
+    //
+    // The top-level inputs and outputs are the perimeter values
+    // on the four edges of the top level array.
+    //
+    // To represent all the connections among the sub-arrays, it
+    // can be seen from the above that d and u (dconn and uconn)
+    // are arrays of size (XSIZE, YTOP + 1), while l and r (lconn
+    // and rconn) are arrays of size (XTOP + 1, YSIZE).
 
-    // wire [YSIZE - 1: 0] testdconn1 = dconn[1];
-    // wire [YSIZE - 1: 0] testuconn19 = uconn[19];
-    // wire [YSIZE - 1: 0] testlconn1 = lconn[1];
-    // wire [YSIZE - 1: 0] testrconn19 = rconn[19];
-
-    // wire [YSIZE - 1: 0] testdconn19 = dconn[19];
-    // wire [YSIZE - 1: 0] testuconn1 = uconn[1];
-    // wire [YSIZE - 1: 0] testlconn19 = lconn[19];
-    // wire [YSIZE - 1: 0] testrconn1 = rconn[1];
+    // NOTE:  For viewing internal signals in gtkwave,
+    // some 2D arrays may need to be copied into 1D arrays.
+    // See the original verilog for examples.
 
     /* The perimeter inputs and outputs connect to the logic analyzer */
     /* (To do:  multiplex inputs between the chip I/O and logic analyzer */
 
-    assign data_out = {uconn[YSIZE][XSIZE - 1:0], dconn[0][XSIZE - 1:0],
-			  rconn[XSIZE][YSIZE - 1:0], lconn[0][YSIZE - 1:0]};
+    assign data_out = {uconn[YTOP][XSIZE - 1:0], dconn[0][XSIZE - 1:0],
+			  rconn[XTOP][YSIZE - 1:0], lconn[0][YSIZE - 1:0]};
 
-    assign dconn[YSIZE][XSIZE - 1:0] = data_in[2*XSIZE+2*YSIZE - 1: 2*YSIZE + XSIZE];
+    assign dconn[YTOP][XSIZE - 1:0] = data_in[2*XSIZE+2*YSIZE - 1: 2*YSIZE + XSIZE];
     assign uconn[0][XSIZE - 1:0] = data_in[2*YSIZE + XSIZE - 1:2*YSIZE];
     assign rconn[0][YSIZE - 1:0] = data_in[2*YSIZE-1:YSIZE];
-    assign lconn[XSIZE][YSIZE - 1:0] = data_in[YSIZE-1:0];
+    assign lconn[XTOP][YSIZE - 1:0] = data_in[YSIZE-1:0];
 
     genvar i, j;
 
@@ -563,22 +501,30 @@ module chaos_array #(
      * i = 0 to N - 1 with j set to zero.
      */
 
-    /* Connected array of cells */
+    /* Connected array of subarrays */
     generate
-	for (j = 0; j < YSIZE; j=j+1) begin: celly
-	    for (i = 0; i < XSIZE; i=i+1) begin: cellx
-    	        chaos_cell chaos_cell_inst (
-    		    .inorth(dconn[j+1][i]),
-		    .isouth(uconn[j][i]),
-		    .ieast(lconn[i+1][j]),
-		    .iwest(rconn[i][j]),
-		    .onorth(uconn[j+1][i]),
-		    .osouth(dconn[j][i]),
-		    .oeast(rconn[i+1][j]),
-		    .owest(lconn[i][j]),
-		    .clk(clk),
+	for (j = 0; j < YTOP; j=j+1) begin: subarrayx
+	    for (i = 0; i < XTOP; i=i+1) begin: subarray
+    	        chaos_subarray #(
+		    .XSIZE(XSIZE / XTOP),
+		    .YSIZE(YSIZE / YTOP)
+		) chaos_subarray_inst (
+		    `ifdef USE_POWER_PINS
+			.vccd1(vccd1),
+			.vssd1(vssd1),
+		    `endif
+    		    .inorth(dconn[j+1][(i+1)*(XSIZE/XTOP)-1:i*(XSIZE/XTOP)]),
+		    .isouth(uconn[j][(i+1)*(XSIZE/XTOP)-1:i*(XSIZE/XTOP)]),
+		    .ieast(lconn[i+1][(j+1)*(YSIZE/YTOP)-1:j*(YSIZE/YTOP)]),
+		    .iwest(rconn[i][(j+1)*(YSIZE/YTOP)-1:j*(YSIZE/YTOP)]),
+		    .onorth(uconn[j+1][(i+1)*(XSIZE/XTOP)-1:i*(XSIZE/XTOP)]),
+		    .osouth(dconn[j][(i+1)*(XSIZE/XTOP)-1:i*(XSIZE/XTOP)]),
+		    .oeast(rconn[i+1][(j+1)*(YSIZE/YTOP)-1:j*(YSIZE/YTOP)]),
+		    .owest(lconn[i][(j+1)*(YSIZE/YTOP)-1:j*(YSIZE/YTOP)]),
 		    .reset(reset),
 		    .hold(hold),
+		    .iclk(clkarray[i][j]),
+		    .oclk(clkarray[i+1][j]),
 		    .idata(shiftreg[i][j]),
 		    .odata(shiftreg[i+1][j])
     	    	);
@@ -588,8 +534,9 @@ module chaos_array #(
 	/* NOTE:  This would work better topologically if each	*/
 	/* row switched the direction of the shift register.	*/
 
-	for (j = 0; j < YSIZE - 1; j=j+1) begin: shifty
-	    assign shiftreg[0][j+1] = shiftreg[XSIZE][j];
+	for (j = 0; j < YTOP - 1; j=j+1) begin: shifty
+	    assign shiftreg[0][j+1] = shiftreg[XTOP][j];
+	    assign clkarray[0][j+1] = clkarray[XTOP][j];
 	end
     endgenerate
 
@@ -608,7 +555,7 @@ module chaos_array #(
 	end else begin
 	    /* Shift data on clock when "write" is not raised */
 	    lutdata[63:1] <= lutdata[62:0];
-	    lutdata[0] <= shiftreg[XSIZE][YSIZE-1];
+	    lutdata[0] <= shiftreg[XTOP][YTOP-1];
 	end
     end
 
