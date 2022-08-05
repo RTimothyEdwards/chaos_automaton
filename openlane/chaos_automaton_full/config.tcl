@@ -33,13 +33,13 @@ set ::env(CLOCK_PERIOD) "25"
 # 100 ns is 10 MHz
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 3006 3596"
+set ::env(DIE_AREA) "0 0 900 900"
 # "0 0 3006 3596"
 
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 
 set ::env(PL_BASIC_PLACEMENT) 0
-set ::env(PL_TARGET_DENSITY) 0.49
+set ::env(PL_TARGET_DENSITY) 0.5
 
 set ::env(SYNTH_EXTRA_MAPPING_FILE) $script_dir/yosys_mapping.v
 set ::env(SYNTH_MAX_FANOUT) 12
@@ -62,15 +62,3 @@ set ::env(RUN_CVC) 1
 
 set ::env(ROUTING_CORES) 10
 # Number of threads to be used during routing processes
-
-# Internal macros
-set ::env(MACRO_PLACEMENT_CFG) $script_dir/macro_placement.cfg
-
-set ::env(VERILOG_FILES_BLACKBOX) "\
-        $script_dir/../../verilog/rtl/chaos_subarray.v"
-
-set ::env(EXTRA_LEFS) "\
-        $script_dir/../../lef/chaos_subarray.lef"
-
-set ::env(EXTRA_GDS_FILES) "\
-        $script_dir/../../gds/chaos_subarray.gds"

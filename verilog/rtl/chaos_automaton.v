@@ -90,7 +90,7 @@
  *-------------------------------------------------------------
  */
 
-`include "chaos_subarray.v"
+//`include "chaos_subarray.v"
 
 /*
  *-----------------------------------------------------------------
@@ -100,9 +100,9 @@
 
 module chaos_automaton #(
     parameter XSIZE = 30,	// Total number of cells left to right
-    parameter YSIZE = 30,	// Total number of cells top to bottom
+    parameter YSIZE = 50,	// Total number of cells top to bottom
     parameter XTOP = 3,		// Number of sub-arrays left to right
-    parameter YTOP = 3,		// Number of sub-arrays top to bottom
+    parameter YTOP = 5,		// Number of sub-arrays top to bottom
     parameter ASIZE = 10,	// Enough bits to count XSIZE * YSIZE
     parameter BASE_ADR = 32'h 3000_0000 // Wishbone base address
 )(
@@ -503,8 +503,8 @@ module chaos_array #(
 
     /* Connected array of subarrays */
     generate
-	for (j = 0; j < YTOP; j=j+1) begin: subarrayx
-	    for (i = 0; i < XTOP; i=i+1) begin: subarray
+	for (j = 0; j < YTOP; j=j+1) begin: subarrayy
+	    for (i = 0; i < XTOP; i=i+1) begin: subarrayx
     	        chaos_subarray #(
 		    .XSIZE(XSIZE / XTOP),
 		    .YSIZE(YSIZE / YTOP)

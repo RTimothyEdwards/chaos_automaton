@@ -60,5 +60,8 @@ set ::env(DIODE_INSERTION_STRATEGY) 4
 # If you're going to use multiple power domains, then disable cvc run.
 set ::env(RUN_CVC) 1
 
-set ::env(ROUTING_CORES) 10 
 # Number of threads to be used during routing processes
+set ::env(ROUTING_CORES) 10 
+
+# Designation of the subarray as a macro/core
+set ::env(DESIGN_IS_CORE) {1}
