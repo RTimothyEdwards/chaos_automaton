@@ -59,3 +59,6 @@ set ::env(GND_NETS) [list {vssd1}]
 set ::env(DIODE_INSERTION_STRATEGY) 4 
 # If you're going to use multiple power domains, then disable cvc run.
 set ::env(RUN_CVC) 1
+
+set ::env(ROUTING_CORES) 10
+# Number of threads to be used during routing processes
