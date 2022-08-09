@@ -49,8 +49,7 @@ set ::env(BASE_SDC_FILE) $script_dir/base.sdc
 # This is because this macro will be inserted in a top level (user_project_wrapper) 
 # where the PDN is planned on metal 5. So, to avoid having shorts between routes
 # in this macro and the top level metal 5 stripes, we have to restrict routes to metal4.  
-# 
-set ::env(RT_MAX_LAYER) {met4}
+# set ::env(RT_MAX_LAYER) {met4}
 
 # You can draw more power domains if you need to 
 set ::env(VDD_NETS) [list {vccd1}]
@@ -60,7 +59,7 @@ set ::env(DIODE_INSERTION_STRATEGY) 4
 # If you're going to use multiple power domains, then disable cvc run.
 set ::env(RUN_CVC) 1
 
-set ::env(ROUTING_CORES) 10
+set ::env(ROUTING_CORES) 16
 # Number of threads to be used during routing processes
 
 # Internal macros
@@ -74,3 +73,10 @@ set ::env(EXTRA_LEFS) "\
 
 set ::env(EXTRA_GDS_FILES) "\
         $script_dir/../../gds/chaos_subarray.gds"
+
+# Power Grid Config
+set ::env(DESIGN_IS_CORE) 1
+set ::env(FP_PDN_CORE_RING) 1
+set ::env(SYNTH_USE_PG_PINS_DEFINES) "USE_POWER_PINS"
+set ::env(FP_PDN_VWIDTH) 18
+set ::env(FP_PDN_HWIDTH) 17

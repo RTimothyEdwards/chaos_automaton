@@ -48,8 +48,7 @@ set ::env(BASE_SDC_FILE) $script_dir/base.sdc
 # Maximum layer used for routing is metal 4.
 # This is because this macro will be inserted in a top level (user_project_wrapper) 
 # where the PDN is planned on metal 5. So, to avoid having shorts between routes
-# in this macro and the top level metal 5 stripes, we have to restrict routes to metal4.  
-# 
+# in this macro and the top level metal 5 stripes, we have to restrict routes to metal4.   
 set ::env(RT_MAX_LAYER) {met4}
 
 # You can draw more power domains if you need to 
@@ -61,7 +60,11 @@ set ::env(DIODE_INSERTION_STRATEGY) 4
 set ::env(RUN_CVC) 1
 
 # Number of threads to be used during routing processes
-set ::env(ROUTING_CORES) 10 
+set ::env(ROUTING_CORES) 16 
 
 # Designation of the subarray as a macro/core
-set ::env(DESIGN_IS_CORE) {1}
+set ::env(DESIGN_IS_CORE) 0
+set ::env(FP_PDN_CORE_RING) 0
+set ::env(VDD_NETS) [list {vccd1}]
+set ::env(GND_NETS) [list {vssd1}]
+set ::env(FP_PDN_VWIDTH) 25
