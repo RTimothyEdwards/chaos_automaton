@@ -65,6 +65,5 @@ set ::env(ROUTING_CORES) 16
 # Designation of the subarray as a macro/core
 set ::env(DESIGN_IS_CORE) 0
 set ::env(FP_PDN_CORE_RING) 0
-set ::env(VDD_NETS) [list {vccd1}]
-set ::env(GND_NETS) [list {vssd1}]
 set ::env(FP_PDN_VWIDTH) 25
+set ::env(SYNTH_USE_PG_PINS_DEFINES) "USE_POWER_PINS"
