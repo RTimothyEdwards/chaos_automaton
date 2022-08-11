@@ -6,13 +6,13 @@ MACRO chaos_subarray
   CLASS BLOCK ;
   FOREIGN chaos_subarray ;
   ORIGIN 0.000 0.000 ;
-  SIZE 900.000 BY 600.000 ;
+  SIZE 825.000 BY 585.000 ;
   PIN hold
     DIRECTION INPUT ;
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 24.930 0.000 25.210 4.000 ;
+        RECT 20.790 0.000 21.070 4.000 ;
     END
   END hold
   PIN iclk
@@ -20,7 +20,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 40.840 4.000 41.440 ;
+        RECT 0.000 40.160 4.000 40.760 ;
     END
   END iclk
   PIN idata
@@ -36,7 +36,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 13.640 900.000 14.240 ;
+        RECT 821.000 13.640 825.000 14.240 ;
     END
   END ieast[0]
   PIN ieast[1]
@@ -44,7 +44,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 40.840 900.000 41.440 ;
+        RECT 821.000 40.160 825.000 40.760 ;
     END
   END ieast[1]
   PIN ieast[2]
@@ -52,7 +52,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 68.040 900.000 68.640 ;
+        RECT 821.000 66.680 825.000 67.280 ;
     END
   END ieast[2]
   PIN ieast[3]
@@ -60,7 +60,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 95.240 900.000 95.840 ;
+        RECT 821.000 93.200 825.000 93.800 ;
     END
   END ieast[3]
   PIN ieast[4]
@@ -68,7 +68,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 122.440 900.000 123.040 ;
+        RECT 821.000 119.720 825.000 120.320 ;
     END
   END ieast[4]
   PIN ieast[5]
@@ -76,7 +76,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 149.640 900.000 150.240 ;
+        RECT 821.000 146.240 825.000 146.840 ;
     END
   END ieast[5]
   PIN ieast[6]
@@ -84,7 +84,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 176.840 900.000 177.440 ;
+        RECT 821.000 172.760 825.000 173.360 ;
     END
   END ieast[6]
   PIN ieast[7]
@@ -92,7 +92,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 204.040 900.000 204.640 ;
+        RECT 821.000 199.280 825.000 199.880 ;
     END
   END ieast[7]
   PIN ieast[8]
@@ -100,7 +100,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 231.240 900.000 231.840 ;
+        RECT 821.000 225.800 825.000 226.400 ;
     END
   END ieast[8]
   PIN ieast[9]
@@ -108,7 +108,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 258.440 900.000 259.040 ;
+        RECT 821.000 252.320 825.000 252.920 ;
     END
   END ieast[9]
   PIN inorth[0]
@@ -116,7 +116,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 873.630 596.000 873.910 600.000 ;
+        RECT 800.950 581.000 801.230 585.000 ;
     END
   END inorth[0]
   PIN inorth[1]
@@ -124,7 +124,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 829.010 596.000 829.290 600.000 ;
+        RECT 760.010 581.000 760.290 585.000 ;
     END
   END inorth[1]
   PIN inorth[2]
@@ -132,7 +132,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 784.390 596.000 784.670 600.000 ;
+        RECT 719.070 581.000 719.350 585.000 ;
     END
   END inorth[2]
   PIN inorth[3]
@@ -140,7 +140,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 739.770 596.000 740.050 600.000 ;
+        RECT 678.130 581.000 678.410 585.000 ;
     END
   END inorth[3]
   PIN inorth[4]
@@ -148,7 +148,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 695.150 596.000 695.430 600.000 ;
+        RECT 637.190 581.000 637.470 585.000 ;
     END
   END inorth[4]
   PIN inorth[5]
@@ -156,7 +156,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 650.530 596.000 650.810 600.000 ;
+        RECT 596.250 581.000 596.530 585.000 ;
     END
   END inorth[5]
   PIN inorth[6]
@@ -164,7 +164,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 605.910 596.000 606.190 600.000 ;
+        RECT 555.310 581.000 555.590 585.000 ;
     END
   END inorth[6]
   PIN inorth[7]
@@ -172,7 +172,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 561.290 596.000 561.570 600.000 ;
+        RECT 514.370 581.000 514.650 585.000 ;
     END
   END inorth[7]
   PIN inorth[8]
@@ -180,7 +180,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 516.670 596.000 516.950 600.000 ;
+        RECT 473.430 581.000 473.710 585.000 ;
     END
   END inorth[8]
   PIN inorth[9]
@@ -188,7 +188,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 472.050 596.000 472.330 600.000 ;
+        RECT 432.490 581.000 432.770 585.000 ;
     END
   END inorth[9]
   PIN isouth[0]
@@ -196,7 +196,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 105.890 0.000 106.170 4.000 ;
+        RECT 95.310 0.000 95.590 4.000 ;
     END
   END isouth[0]
   PIN isouth[1]
@@ -204,7 +204,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 146.370 0.000 146.650 4.000 ;
+        RECT 132.570 0.000 132.850 4.000 ;
     END
   END isouth[1]
   PIN isouth[2]
@@ -212,7 +212,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 186.850 0.000 187.130 4.000 ;
+        RECT 169.830 0.000 170.110 4.000 ;
     END
   END isouth[2]
   PIN isouth[3]
@@ -220,7 +220,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 227.330 0.000 227.610 4.000 ;
+        RECT 207.090 0.000 207.370 4.000 ;
     END
   END isouth[3]
   PIN isouth[4]
@@ -228,7 +228,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 267.810 0.000 268.090 4.000 ;
+        RECT 244.350 0.000 244.630 4.000 ;
     END
   END isouth[4]
   PIN isouth[5]
@@ -236,7 +236,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 308.290 0.000 308.570 4.000 ;
+        RECT 281.610 0.000 281.890 4.000 ;
     END
   END isouth[5]
   PIN isouth[6]
@@ -244,7 +244,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 348.770 0.000 349.050 4.000 ;
+        RECT 318.870 0.000 319.150 4.000 ;
     END
   END isouth[6]
   PIN isouth[7]
@@ -252,7 +252,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 389.250 0.000 389.530 4.000 ;
+        RECT 356.130 0.000 356.410 4.000 ;
     END
   END isouth[7]
   PIN isouth[8]
@@ -260,7 +260,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 429.730 0.000 430.010 4.000 ;
+        RECT 393.390 0.000 393.670 4.000 ;
     END
   END isouth[8]
   PIN isouth[9]
@@ -268,7 +268,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 470.210 0.000 470.490 4.000 ;
+        RECT 430.650 0.000 430.930 4.000 ;
     END
   END isouth[9]
   PIN iwest[0]
@@ -276,7 +276,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 584.840 4.000 585.440 ;
+        RECT 0.000 570.560 4.000 571.160 ;
     END
   END iwest[0]
   PIN iwest[1]
@@ -284,7 +284,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 557.640 4.000 558.240 ;
+        RECT 0.000 544.040 4.000 544.640 ;
     END
   END iwest[1]
   PIN iwest[2]
@@ -292,7 +292,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 530.440 4.000 531.040 ;
+        RECT 0.000 517.520 4.000 518.120 ;
     END
   END iwest[2]
   PIN iwest[3]
@@ -300,7 +300,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 503.240 4.000 503.840 ;
+        RECT 0.000 491.000 4.000 491.600 ;
     END
   END iwest[3]
   PIN iwest[4]
@@ -308,7 +308,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 476.040 4.000 476.640 ;
+        RECT 0.000 464.480 4.000 465.080 ;
     END
   END iwest[4]
   PIN iwest[5]
@@ -316,7 +316,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 448.840 4.000 449.440 ;
+        RECT 0.000 437.960 4.000 438.560 ;
     END
   END iwest[5]
   PIN iwest[6]
@@ -324,7 +324,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 421.640 4.000 422.240 ;
+        RECT 0.000 411.440 4.000 412.040 ;
     END
   END iwest[6]
   PIN iwest[7]
@@ -332,7 +332,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 394.440 4.000 395.040 ;
+        RECT 0.000 384.920 4.000 385.520 ;
     END
   END iwest[7]
   PIN iwest[8]
@@ -340,7 +340,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 367.240 4.000 367.840 ;
+        RECT 0.000 358.400 4.000 359.000 ;
     END
   END iwest[8]
   PIN iwest[9]
@@ -348,7 +348,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 340.040 4.000 340.640 ;
+        RECT 0.000 331.880 4.000 332.480 ;
     END
   END iwest[9]
   PIN oclk
@@ -356,7 +356,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 557.640 900.000 558.240 ;
+        RECT 821.000 544.040 825.000 544.640 ;
     END
   END oclk
   PIN odata
@@ -364,7 +364,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 584.840 900.000 585.440 ;
+        RECT 821.000 570.560 825.000 571.160 ;
     END
   END odata
   PIN oeast[0]
@@ -372,7 +372,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 285.640 900.000 286.240 ;
+        RECT 821.000 278.840 825.000 279.440 ;
     END
   END oeast[0]
   PIN oeast[1]
@@ -380,7 +380,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 312.840 900.000 313.440 ;
+        RECT 821.000 305.360 825.000 305.960 ;
     END
   END oeast[1]
   PIN oeast[2]
@@ -388,7 +388,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 340.040 900.000 340.640 ;
+        RECT 821.000 331.880 825.000 332.480 ;
     END
   END oeast[2]
   PIN oeast[3]
@@ -396,7 +396,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 367.240 900.000 367.840 ;
+        RECT 821.000 358.400 825.000 359.000 ;
     END
   END oeast[3]
   PIN oeast[4]
@@ -404,7 +404,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 394.440 900.000 395.040 ;
+        RECT 821.000 384.920 825.000 385.520 ;
     END
   END oeast[4]
   PIN oeast[5]
@@ -412,7 +412,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 421.640 900.000 422.240 ;
+        RECT 821.000 411.440 825.000 412.040 ;
     END
   END oeast[5]
   PIN oeast[6]
@@ -420,7 +420,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 448.840 900.000 449.440 ;
+        RECT 821.000 437.960 825.000 438.560 ;
     END
   END oeast[6]
   PIN oeast[7]
@@ -428,7 +428,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 476.040 900.000 476.640 ;
+        RECT 821.000 464.480 825.000 465.080 ;
     END
   END oeast[7]
   PIN oeast[8]
@@ -436,7 +436,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 503.240 900.000 503.840 ;
+        RECT 821.000 491.000 825.000 491.600 ;
     END
   END oeast[8]
   PIN oeast[9]
@@ -444,7 +444,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 896.000 530.440 900.000 531.040 ;
+        RECT 821.000 517.520 825.000 518.120 ;
     END
   END oeast[9]
   PIN onorth[0]
@@ -452,7 +452,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 427.430 596.000 427.710 600.000 ;
+        RECT 391.550 581.000 391.830 585.000 ;
     END
   END onorth[0]
   PIN onorth[1]
@@ -460,7 +460,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 382.810 596.000 383.090 600.000 ;
+        RECT 350.610 581.000 350.890 585.000 ;
     END
   END onorth[1]
   PIN onorth[2]
@@ -468,7 +468,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 338.190 596.000 338.470 600.000 ;
+        RECT 309.670 581.000 309.950 585.000 ;
     END
   END onorth[2]
   PIN onorth[3]
@@ -476,7 +476,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 293.570 596.000 293.850 600.000 ;
+        RECT 268.730 581.000 269.010 585.000 ;
     END
   END onorth[3]
   PIN onorth[4]
@@ -484,7 +484,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 248.950 596.000 249.230 600.000 ;
+        RECT 227.790 581.000 228.070 585.000 ;
     END
   END onorth[4]
   PIN onorth[5]
@@ -492,7 +492,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 204.330 596.000 204.610 600.000 ;
+        RECT 186.850 581.000 187.130 585.000 ;
     END
   END onorth[5]
   PIN onorth[6]
@@ -500,7 +500,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 159.710 596.000 159.990 600.000 ;
+        RECT 145.910 581.000 146.190 585.000 ;
     END
   END onorth[6]
   PIN onorth[7]
@@ -508,7 +508,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 115.090 596.000 115.370 600.000 ;
+        RECT 104.970 581.000 105.250 585.000 ;
     END
   END onorth[7]
   PIN onorth[8]
@@ -516,7 +516,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 70.470 596.000 70.750 600.000 ;
+        RECT 64.030 581.000 64.310 585.000 ;
     END
   END onorth[8]
   PIN onorth[9]
@@ -524,7 +524,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 25.850 596.000 26.130 600.000 ;
+        RECT 23.090 581.000 23.370 585.000 ;
     END
   END onorth[9]
   PIN osouth[0]
@@ -532,7 +532,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 510.690 0.000 510.970 4.000 ;
+        RECT 467.910 0.000 468.190 4.000 ;
     END
   END osouth[0]
   PIN osouth[1]
@@ -540,7 +540,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 551.170 0.000 551.450 4.000 ;
+        RECT 505.170 0.000 505.450 4.000 ;
     END
   END osouth[1]
   PIN osouth[2]
@@ -548,7 +548,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 591.650 0.000 591.930 4.000 ;
+        RECT 542.430 0.000 542.710 4.000 ;
     END
   END osouth[2]
   PIN osouth[3]
@@ -556,7 +556,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 632.130 0.000 632.410 4.000 ;
+        RECT 579.690 0.000 579.970 4.000 ;
     END
   END osouth[3]
   PIN osouth[4]
@@ -564,7 +564,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 672.610 0.000 672.890 4.000 ;
+        RECT 616.950 0.000 617.230 4.000 ;
     END
   END osouth[4]
   PIN osouth[5]
@@ -572,7 +572,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 713.090 0.000 713.370 4.000 ;
+        RECT 654.210 0.000 654.490 4.000 ;
     END
   END osouth[5]
   PIN osouth[6]
@@ -580,7 +580,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 753.570 0.000 753.850 4.000 ;
+        RECT 691.470 0.000 691.750 4.000 ;
     END
   END osouth[6]
   PIN osouth[7]
@@ -588,7 +588,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 794.050 0.000 794.330 4.000 ;
+        RECT 728.730 0.000 729.010 4.000 ;
     END
   END osouth[7]
   PIN osouth[8]
@@ -596,7 +596,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 834.530 0.000 834.810 4.000 ;
+        RECT 765.990 0.000 766.270 4.000 ;
     END
   END osouth[8]
   PIN osouth[9]
@@ -604,7 +604,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 875.010 0.000 875.290 4.000 ;
+        RECT 803.250 0.000 803.530 4.000 ;
     END
   END osouth[9]
   PIN owest[0]
@@ -612,7 +612,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 312.840 4.000 313.440 ;
+        RECT 0.000 305.360 4.000 305.960 ;
     END
   END owest[0]
   PIN owest[1]
@@ -620,7 +620,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 285.640 4.000 286.240 ;
+        RECT 0.000 278.840 4.000 279.440 ;
     END
   END owest[1]
   PIN owest[2]
@@ -628,7 +628,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 258.440 4.000 259.040 ;
+        RECT 0.000 252.320 4.000 252.920 ;
     END
   END owest[2]
   PIN owest[3]
@@ -636,7 +636,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 231.240 4.000 231.840 ;
+        RECT 0.000 225.800 4.000 226.400 ;
     END
   END owest[3]
   PIN owest[4]
@@ -644,7 +644,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 204.040 4.000 204.640 ;
+        RECT 0.000 199.280 4.000 199.880 ;
     END
   END owest[4]
   PIN owest[5]
@@ -652,7 +652,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 176.840 4.000 177.440 ;
+        RECT 0.000 172.760 4.000 173.360 ;
     END
   END owest[5]
   PIN owest[6]
@@ -660,7 +660,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 149.640 4.000 150.240 ;
+        RECT 0.000 146.240 4.000 146.840 ;
     END
   END owest[6]
   PIN owest[7]
@@ -668,7 +668,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 122.440 4.000 123.040 ;
+        RECT 0.000 119.720 4.000 120.320 ;
     END
   END owest[7]
   PIN owest[8]
@@ -676,7 +676,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 95.240 4.000 95.840 ;
+        RECT 0.000 93.200 4.000 93.800 ;
     END
   END owest[8]
   PIN owest[9]
@@ -684,7 +684,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met3 ;
-        RECT 0.000 68.040 4.000 68.640 ;
+        RECT 0.000 66.680 4.000 67.280 ;
     END
   END owest[9]
   PIN reset
@@ -692,7 +692,7 @@ MACRO chaos_subarray
     USE SIGNAL ;
     PORT
       LAYER met2 ;
-        RECT 65.410 0.000 65.690 4.000 ;
+        RECT 58.050 0.000 58.330 4.000 ;
     END
   END reset
   PIN vccd1
@@ -700,27 +700,27 @@ MACRO chaos_subarray
     USE POWER ;
     PORT
       LAYER met4 ;
-        RECT 9.340 10.640 34.340 587.760 ;
+        RECT 9.340 10.640 34.340 574.160 ;
     END
     PORT
       LAYER met4 ;
-        RECT 162.940 10.640 187.940 587.760 ;
+        RECT 162.940 10.640 187.940 574.160 ;
     END
     PORT
       LAYER met4 ;
-        RECT 316.540 10.640 341.540 587.760 ;
+        RECT 316.540 10.640 341.540 574.160 ;
     END
     PORT
       LAYER met4 ;
-        RECT 470.140 10.640 495.140 587.760 ;
+        RECT 470.140 10.640 495.140 574.160 ;
     END
     PORT
       LAYER met4 ;
-        RECT 623.740 10.640 648.740 587.760 ;
+        RECT 623.740 10.640 648.740 574.160 ;
     END
     PORT
       LAYER met4 ;
-        RECT 777.340 10.640 802.340 587.760 ;
+        RECT 777.340 10.640 802.340 574.160 ;
     END
   END vccd1
   PIN vssd1
@@ -728,140 +728,135 @@ MACRO chaos_subarray
     USE GROUND ;
     PORT
       LAYER met4 ;
-        RECT 86.140 10.640 111.140 587.760 ;
+        RECT 86.140 10.640 111.140 574.160 ;
     END
     PORT
       LAYER met4 ;
-        RECT 239.740 10.640 264.740 587.760 ;
+        RECT 239.740 10.640 264.740 574.160 ;
     END
     PORT
       LAYER met4 ;
-        RECT 393.340 10.640 418.340 587.760 ;
+        RECT 393.340 10.640 418.340 574.160 ;
     END
     PORT
       LAYER met4 ;
-        RECT 546.940 10.640 571.940 587.760 ;
+        RECT 546.940 10.640 571.940 574.160 ;
     END
     PORT
       LAYER met4 ;
-        RECT 700.540 10.640 725.540 587.760 ;
-    END
-    PORT
-      LAYER met4 ;
-        RECT 854.140 10.640 879.140 587.760 ;
+        RECT 700.540 10.640 725.540 574.160 ;
     END
   END vssd1
   OBS
       LAYER li1 ;
-        RECT 5.520 10.795 894.240 587.605 ;
+        RECT 5.520 10.795 819.260 574.005 ;
       LAYER met1 ;
-        RECT 4.210 5.820 894.240 588.160 ;
+        RECT 2.830 8.880 819.260 575.920 ;
       LAYER met2 ;
-        RECT 4.240 595.720 25.570 596.770 ;
-        RECT 26.410 595.720 70.190 596.770 ;
-        RECT 71.030 595.720 114.810 596.770 ;
-        RECT 115.650 595.720 159.430 596.770 ;
-        RECT 160.270 595.720 204.050 596.770 ;
-        RECT 204.890 595.720 248.670 596.770 ;
-        RECT 249.510 595.720 293.290 596.770 ;
-        RECT 294.130 595.720 337.910 596.770 ;
-        RECT 338.750 595.720 382.530 596.770 ;
-        RECT 383.370 595.720 427.150 596.770 ;
-        RECT 427.990 595.720 471.770 596.770 ;
-        RECT 472.610 595.720 516.390 596.770 ;
-        RECT 517.230 595.720 561.010 596.770 ;
-        RECT 561.850 595.720 605.630 596.770 ;
-        RECT 606.470 595.720 650.250 596.770 ;
-        RECT 651.090 595.720 694.870 596.770 ;
-        RECT 695.710 595.720 739.490 596.770 ;
-        RECT 740.330 595.720 784.110 596.770 ;
-        RECT 784.950 595.720 828.730 596.770 ;
-        RECT 829.570 595.720 873.350 596.770 ;
-        RECT 874.190 595.720 892.310 596.770 ;
-        RECT 4.240 4.280 892.310 595.720 ;
-        RECT 4.240 4.000 24.650 4.280 ;
-        RECT 25.490 4.000 65.130 4.280 ;
-        RECT 65.970 4.000 105.610 4.280 ;
-        RECT 106.450 4.000 146.090 4.280 ;
-        RECT 146.930 4.000 186.570 4.280 ;
-        RECT 187.410 4.000 227.050 4.280 ;
-        RECT 227.890 4.000 267.530 4.280 ;
-        RECT 268.370 4.000 308.010 4.280 ;
-        RECT 308.850 4.000 348.490 4.280 ;
-        RECT 349.330 4.000 388.970 4.280 ;
-        RECT 389.810 4.000 429.450 4.280 ;
-        RECT 430.290 4.000 469.930 4.280 ;
-        RECT 470.770 4.000 510.410 4.280 ;
-        RECT 511.250 4.000 550.890 4.280 ;
-        RECT 551.730 4.000 591.370 4.280 ;
-        RECT 592.210 4.000 631.850 4.280 ;
-        RECT 632.690 4.000 672.330 4.280 ;
-        RECT 673.170 4.000 712.810 4.280 ;
-        RECT 713.650 4.000 753.290 4.280 ;
-        RECT 754.130 4.000 793.770 4.280 ;
-        RECT 794.610 4.000 834.250 4.280 ;
-        RECT 835.090 4.000 874.730 4.280 ;
-        RECT 875.570 4.000 892.310 4.280 ;
+        RECT 2.860 580.720 22.810 581.810 ;
+        RECT 23.650 580.720 63.750 581.810 ;
+        RECT 64.590 580.720 104.690 581.810 ;
+        RECT 105.530 580.720 145.630 581.810 ;
+        RECT 146.470 580.720 186.570 581.810 ;
+        RECT 187.410 580.720 227.510 581.810 ;
+        RECT 228.350 580.720 268.450 581.810 ;
+        RECT 269.290 580.720 309.390 581.810 ;
+        RECT 310.230 580.720 350.330 581.810 ;
+        RECT 351.170 580.720 391.270 581.810 ;
+        RECT 392.110 580.720 432.210 581.810 ;
+        RECT 433.050 580.720 473.150 581.810 ;
+        RECT 473.990 580.720 514.090 581.810 ;
+        RECT 514.930 580.720 555.030 581.810 ;
+        RECT 555.870 580.720 595.970 581.810 ;
+        RECT 596.810 580.720 636.910 581.810 ;
+        RECT 637.750 580.720 677.850 581.810 ;
+        RECT 678.690 580.720 718.790 581.810 ;
+        RECT 719.630 580.720 759.730 581.810 ;
+        RECT 760.570 580.720 800.670 581.810 ;
+        RECT 801.510 580.720 818.240 581.810 ;
+        RECT 2.860 4.280 818.240 580.720 ;
+        RECT 2.860 3.670 20.510 4.280 ;
+        RECT 21.350 3.670 57.770 4.280 ;
+        RECT 58.610 3.670 95.030 4.280 ;
+        RECT 95.870 3.670 132.290 4.280 ;
+        RECT 133.130 3.670 169.550 4.280 ;
+        RECT 170.390 3.670 206.810 4.280 ;
+        RECT 207.650 3.670 244.070 4.280 ;
+        RECT 244.910 3.670 281.330 4.280 ;
+        RECT 282.170 3.670 318.590 4.280 ;
+        RECT 319.430 3.670 355.850 4.280 ;
+        RECT 356.690 3.670 393.110 4.280 ;
+        RECT 393.950 3.670 430.370 4.280 ;
+        RECT 431.210 3.670 467.630 4.280 ;
+        RECT 468.470 3.670 504.890 4.280 ;
+        RECT 505.730 3.670 542.150 4.280 ;
+        RECT 542.990 3.670 579.410 4.280 ;
+        RECT 580.250 3.670 616.670 4.280 ;
+        RECT 617.510 3.670 653.930 4.280 ;
+        RECT 654.770 3.670 691.190 4.280 ;
+        RECT 692.030 3.670 728.450 4.280 ;
+        RECT 729.290 3.670 765.710 4.280 ;
+        RECT 766.550 3.670 802.970 4.280 ;
+        RECT 803.810 3.670 818.240 4.280 ;
       LAYER met3 ;
-        RECT 4.000 585.840 896.000 587.685 ;
-        RECT 4.400 584.440 895.600 585.840 ;
-        RECT 4.000 558.640 896.000 584.440 ;
-        RECT 4.400 557.240 895.600 558.640 ;
-        RECT 4.000 531.440 896.000 557.240 ;
-        RECT 4.400 530.040 895.600 531.440 ;
-        RECT 4.000 504.240 896.000 530.040 ;
-        RECT 4.400 502.840 895.600 504.240 ;
-        RECT 4.000 477.040 896.000 502.840 ;
-        RECT 4.400 475.640 895.600 477.040 ;
-        RECT 4.000 449.840 896.000 475.640 ;
-        RECT 4.400 448.440 895.600 449.840 ;
-        RECT 4.000 422.640 896.000 448.440 ;
-        RECT 4.400 421.240 895.600 422.640 ;
-        RECT 4.000 395.440 896.000 421.240 ;
-        RECT 4.400 394.040 895.600 395.440 ;
-        RECT 4.000 368.240 896.000 394.040 ;
-        RECT 4.400 366.840 895.600 368.240 ;
-        RECT 4.000 341.040 896.000 366.840 ;
-        RECT 4.400 339.640 895.600 341.040 ;
-        RECT 4.000 313.840 896.000 339.640 ;
-        RECT 4.400 312.440 895.600 313.840 ;
-        RECT 4.000 286.640 896.000 312.440 ;
-        RECT 4.400 285.240 895.600 286.640 ;
-        RECT 4.000 259.440 896.000 285.240 ;
-        RECT 4.400 258.040 895.600 259.440 ;
-        RECT 4.000 232.240 896.000 258.040 ;
-        RECT 4.400 230.840 895.600 232.240 ;
-        RECT 4.000 205.040 896.000 230.840 ;
-        RECT 4.400 203.640 895.600 205.040 ;
-        RECT 4.000 177.840 896.000 203.640 ;
-        RECT 4.400 176.440 895.600 177.840 ;
-        RECT 4.000 150.640 896.000 176.440 ;
-        RECT 4.400 149.240 895.600 150.640 ;
-        RECT 4.000 123.440 896.000 149.240 ;
-        RECT 4.400 122.040 895.600 123.440 ;
-        RECT 4.000 96.240 896.000 122.040 ;
-        RECT 4.400 94.840 895.600 96.240 ;
-        RECT 4.000 69.040 896.000 94.840 ;
-        RECT 4.400 67.640 895.600 69.040 ;
-        RECT 4.000 41.840 896.000 67.640 ;
-        RECT 4.400 40.440 895.600 41.840 ;
-        RECT 4.000 14.640 896.000 40.440 ;
-        RECT 4.400 13.240 895.600 14.640 ;
-        RECT 4.000 10.715 896.000 13.240 ;
+        RECT 4.000 571.560 821.000 574.085 ;
+        RECT 4.400 570.160 820.600 571.560 ;
+        RECT 4.000 545.040 821.000 570.160 ;
+        RECT 4.400 543.640 820.600 545.040 ;
+        RECT 4.000 518.520 821.000 543.640 ;
+        RECT 4.400 517.120 820.600 518.520 ;
+        RECT 4.000 492.000 821.000 517.120 ;
+        RECT 4.400 490.600 820.600 492.000 ;
+        RECT 4.000 465.480 821.000 490.600 ;
+        RECT 4.400 464.080 820.600 465.480 ;
+        RECT 4.000 438.960 821.000 464.080 ;
+        RECT 4.400 437.560 820.600 438.960 ;
+        RECT 4.000 412.440 821.000 437.560 ;
+        RECT 4.400 411.040 820.600 412.440 ;
+        RECT 4.000 385.920 821.000 411.040 ;
+        RECT 4.400 384.520 820.600 385.920 ;
+        RECT 4.000 359.400 821.000 384.520 ;
+        RECT 4.400 358.000 820.600 359.400 ;
+        RECT 4.000 332.880 821.000 358.000 ;
+        RECT 4.400 331.480 820.600 332.880 ;
+        RECT 4.000 306.360 821.000 331.480 ;
+        RECT 4.400 304.960 820.600 306.360 ;
+        RECT 4.000 279.840 821.000 304.960 ;
+        RECT 4.400 278.440 820.600 279.840 ;
+        RECT 4.000 253.320 821.000 278.440 ;
+        RECT 4.400 251.920 820.600 253.320 ;
+        RECT 4.000 226.800 821.000 251.920 ;
+        RECT 4.400 225.400 820.600 226.800 ;
+        RECT 4.000 200.280 821.000 225.400 ;
+        RECT 4.400 198.880 820.600 200.280 ;
+        RECT 4.000 173.760 821.000 198.880 ;
+        RECT 4.400 172.360 820.600 173.760 ;
+        RECT 4.000 147.240 821.000 172.360 ;
+        RECT 4.400 145.840 820.600 147.240 ;
+        RECT 4.000 120.720 821.000 145.840 ;
+        RECT 4.400 119.320 820.600 120.720 ;
+        RECT 4.000 94.200 821.000 119.320 ;
+        RECT 4.400 92.800 820.600 94.200 ;
+        RECT 4.000 67.680 821.000 92.800 ;
+        RECT 4.400 66.280 820.600 67.680 ;
+        RECT 4.000 41.160 821.000 66.280 ;
+        RECT 4.400 39.760 820.600 41.160 ;
+        RECT 4.000 14.640 821.000 39.760 ;
+        RECT 4.400 13.240 820.600 14.640 ;
+        RECT 4.000 10.715 821.000 13.240 ;
       LAYER met4 ;
-        RECT 7.655 14.455 8.940 545.185 ;
-        RECT 34.740 14.455 85.740 545.185 ;
-        RECT 111.540 14.455 162.540 545.185 ;
-        RECT 188.340 14.455 239.340 545.185 ;
-        RECT 265.140 14.455 316.140 545.185 ;
-        RECT 341.940 14.455 392.940 545.185 ;
-        RECT 418.740 14.455 469.740 545.185 ;
-        RECT 495.540 14.455 546.540 545.185 ;
-        RECT 572.340 14.455 623.340 545.185 ;
-        RECT 649.140 14.455 700.140 545.185 ;
-        RECT 725.940 14.455 776.940 545.185 ;
-        RECT 802.740 14.455 853.740 545.185 ;
-        RECT 879.540 14.455 889.345 545.185 ;
+        RECT 7.655 13.095 8.940 567.625 ;
+        RECT 34.740 13.095 85.740 567.625 ;
+        RECT 111.540 13.095 162.540 567.625 ;
+        RECT 188.340 13.095 239.340 567.625 ;
+        RECT 265.140 13.095 316.140 567.625 ;
+        RECT 341.940 13.095 392.940 567.625 ;
+        RECT 418.740 13.095 469.740 567.625 ;
+        RECT 495.540 13.095 546.540 567.625 ;
+        RECT 572.340 13.095 623.340 567.625 ;
+        RECT 649.140 13.095 700.140 567.625 ;
+        RECT 725.940 13.095 776.940 567.625 ;
+        RECT 802.740 13.095 813.905 567.625 ;
   END
 END chaos_subarray
 END LIBRARY

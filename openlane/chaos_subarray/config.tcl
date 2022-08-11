@@ -33,13 +33,13 @@ set ::env(CLOCK_PERIOD) "25"
 # 100 ns is 10 MHz
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 900 600"
+set ::env(DIE_AREA) "0 0 825 585"
 # "0 0 3006 3596"
 
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 
 set ::env(PL_BASIC_PLACEMENT) 0
-set ::env(PL_TARGET_DENSITY) 0.48
+set ::env(PL_TARGET_DENSITY) 0.45
 
 set ::env(SYNTH_EXTRA_MAPPING_FILE) $script_dir/yosys_mapping.v
 set ::env(SYNTH_MAX_FANOUT) 12
