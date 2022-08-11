@@ -82,44 +82,47 @@ module user_project_wrapper #(
 /* User project is instantiated  here   */
 /*--------------------------------------*/
 
-localparam XSIZE = 30, YSIZE = 50, XTOP = 3, YTOP = 5;
-wire [YSIZE-1: 0] data_in_east;
-wire [YSIZE-1: 0] data_in_west;
-wire [XSIZE-1: 0] data_in_north;
-wire [XSIZE-1: 0] data_in_south;
-wire [YSIZE-1: 0] data_out_east;
-wire [YSIZE-1: 0] data_out_west;
-wire [XSIZE-1: 0] data_out_north;
-wire [XSIZE-1: 0] data_out_south;
-reg hold;
-wire [63:0] rdata;
-reg [63:0] wdata;
-reg write;
+chaos_automaton chaos (
+    `ifdef USE_POWER_PINS
+	.vdda1(vdda1),	// User area 1 3.3V power
+	.vdda2(vdda2),	// User area 2 3.3V power
+	.vssa1(vssa1),	// User area 1 analog ground
+	.vssa2(vssa2),	// User area 2 analog ground
+	.vccd1(vccd1),	// User area 1 1.8V power
+	.vccd2(vccd2),	// User area 2 1.8V power
+	.vssd1(vssd1),	// User area 1 digital ground
+	.vssd2(vssd2),	// User area 2 digital ground
+    `endif
 
-chaos_array #(
-	.XSIZE(XSIZE),
-	.YSIZE(YSIZE),
-	.XTOP(XTOP),
-	.YTOP(YTOP),
-	.BASE_ADR(32'h 3000_0000)
-) chaos_array_inst (
-	// .vccd1(vccd1),
-	// .vssd1(vssd1),
-	.clk(wb_clk_i),
-	.reset(wb_rst_i),
-	.hold(hold),
-	.rdata(rdata),
-	.wdata(wdata),
-	.write(write),
-	.data_in_east(data_in_east),
-	.data_in_west(data_in_west),
-	.data_in_north(data_in_north),
-	.data_in_south(data_in_south),
-	.data_out_east(data_out_east),
- 	.data_out_west(data_out_west),
-	.data_out_north(data_out_north),
-	.data_out_south(data_out_south)
-); 
+    .wb_clk_i(wb_clk_i),
+    .wb_rst_i(wb_rst_i),
+
+    // MGMT SoC Wishbone Slave
+
+    .wbs_cyc_i(wbs_cyc_i),
+    .wbs_stb_i(wbs_stb_i),
+    .wbs_we_i(wbs_we_i),
+    .wbs_sel_i(wbs_sel_i),
+    .wbs_adr_i(wbs_adr_i),
+    .wbs_dat_i(wbs_dat_i),
+    .wbs_ack_o(wbs_ack_o),
+    .wbs_dat_o(wbs_dat_o),
+
+    // Logic Analyzer
+
+    .la_data_in(la_data_in),
+    .la_data_out(la_data_out),
+    .la_oenb (la_oenb),
+
+    // IO Pads
+
+    .io_in (io_in),
+    .io_out(io_out),
+    .io_oeb(io_oeb),
+
+    // IRQ
+    .irq(user_irq)
+);
 
 endmodule // user_project_wrapper
 

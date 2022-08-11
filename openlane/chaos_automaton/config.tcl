@@ -33,13 +33,13 @@ set ::env(CLOCK_PERIOD) "25"
 # 100 ns is 10 MHz
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 3006 3596"
+set ::env(DIE_AREA) "0 0 2920 3520"
 # "0 0 3006 3596"
 
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 
 set ::env(PL_BASIC_PLACEMENT) 0
-set ::env(PL_TARGET_DENSITY) 0.49
+set ::env(PL_TARGET_DENSITY) 0.2
 
 set ::env(SYNTH_EXTRA_MAPPING_FILE) $script_dir/yosys_mapping.v
 set ::env(SYNTH_MAX_FANOUT) 12
@@ -51,9 +51,6 @@ set ::env(BASE_SDC_FILE) $script_dir/base.sdc
 # in this macro and the top level metal 5 stripes, we have to restrict routes to metal4.  
 set ::env(RT_MAX_LAYER) {met5}
 
-# You can draw more power domains if you need to 
-set ::env(VDD_NETS) [list {vccd1}]
-set ::env(GND_NETS) [list {vssd1}]
 
 set ::env(DIODE_INSERTION_STRATEGY) 4 
 # If you're going to use multiple power domains, then disable cvc run.
@@ -74,10 +71,41 @@ set ::env(EXTRA_LEFS) "\
 set ::env(EXTRA_GDS_FILES) "\
         $script_dir/../../gds/chaos_subarray.gds"
 
-# Power Grid Config
-set ::env(DESIGN_IS_CORE) 1
+set ::env(MAGIC_ZEROIZE_ORIGIN) 0
+
+# Area Configurations. DON'T TOUCH.
+set ::env(FP_SIZING) absolute
+set ::env(DIE_AREA) "0 0 2920 3520"
+
+set ::env(RUN_CVC) 0
+
+set ::unit 2.4
+set ::env(FP_IO_VEXTEND) [expr 2*$::unit]
+set ::env(FP_IO_HEXTEND) [expr 2*$::unit]
+set ::env(FP_IO_VLENGTH) $::unit
+set ::env(FP_IO_HLENGTH) $::unit
+
+set ::env(FP_IO_VTHICKNESS_MULT) 4
+set ::env(FP_IO_HTHICKNESS_MULT) 4
+
+# Power & Pin Configurations. DON'T TOUCH.
 set ::env(FP_PDN_CORE_RING) 1
+set ::env(FP_PDN_CORE_RING_VWIDTH) 3.1
+set ::env(FP_PDN_CORE_RING_HWIDTH) 3.1
+set ::env(FP_PDN_CORE_RING_VOFFSET) 12.45
+set ::env(FP_PDN_CORE_RING_HOFFSET) $::env(FP_PDN_CORE_RING_VOFFSET)
+set ::env(FP_PDN_CORE_RING_VSPACING) 1.7
+set ::env(FP_PDN_CORE_RING_HSPACING) $::env(FP_PDN_CORE_RING_VSPACING)
+
+set ::env(FP_PDN_VWIDTH) 3.1
+set ::env(FP_PDN_HWIDTH) 3.1
+set ::env(FP_PDN_VSPACING) [expr 5*$::env(FP_PDN_CORE_RING_VWIDTH)]
+set ::env(FP_PDN_HSPACING) [expr 5*$::env(FP_PDN_CORE_RING_HWIDTH)]
+
+set ::env(VDD_NETS) [list {vccd1} {vccd2} {vdda1} {vdda2}]
+set ::env(GND_NETS) [list {vssd1} {vssd2} {vssa1} {vssa2}]
 set ::env(SYNTH_USE_PG_PINS_DEFINES) "USE_POWER_PINS"
-set ::env(FP_PDN_VWIDTH) 18
-set ::env(FP_PDN_HWIDTH) 17
 set ::env(FP_PDN_MACRO_HOOKS) ".* vccd1 vssd1 vccd1 vssd1"
+
+# Pin placement template
+set ::env(FP_DEF_TEMPLATE) $::env(DESIGN_DIR)/user_project_wrapper.def
