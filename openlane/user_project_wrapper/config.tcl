@@ -55,13 +55,15 @@ set ::env(MACRO_PLACEMENT_CFG) $script_dir/macro.cfg
 ### Black-box verilog and views
 set ::env(VERILOG_FILES_BLACKBOX) "\
 	$::env(CARAVEL_ROOT)/verilog/rtl/defines.v \
-	$script_dir/../../verilog/rtl/chaos_subarray.v"
+	$script_dir/../../verilog/rtl/user_project_includes.v"
 
 set ::env(EXTRA_LEFS) "\
-	$script_dir/../../lef/chaos_subarray.lef"
+	$script_dir/../../lef/chaos_subarray.lef \
+	$script_dir/../../lef/chaos_automaton.lef"
 
 set ::env(EXTRA_GDS_FILES) "\
-	$script_dir/../../gds/chaos_subarray.gds"
+	$script_dir/../../gds/chaos_subarray.gds\
+	$script_dir/../../gds/chaos_automaton.gds"
 
 # set ::env(GLB_RT_MAXLAYER) 5
 set ::env(RT_MAX_LAYER) {met5}
@@ -74,19 +76,19 @@ set ::env(ROUTING_CORES) 16
 set ::env(FP_PDN_CHECK_NODES) 0
 
 # The following is because there are no std cells in the example wrapper project.
-set ::env(SYNTH_TOP_LEVEL) 1
-set ::env(PL_RANDOM_GLB_PLACEMENT) 1
+# set ::env(SYNTH_TOP_LEVEL) 1
+# set ::env(PL_RANDOM_GLB_PLACEMENT) 1
 
-set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 0
-set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 0
-set ::env(PL_RESIZER_BUFFER_INPUT_PORTS) 0
-set ::env(PL_RESIZER_BUFFER_OUTPUT_PORTS) 0
+# set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 0
+# set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 0
+# set ::env(PL_RESIZER_BUFFER_INPUT_PORTS) 0
+# set ::env(PL_RESIZER_BUFFER_OUTPUT_PORTS) 0
 
-set ::env(FP_PDN_ENABLE_RAILS) 0
+# set ::env(FP_PDN_ENABLE_RAILS) 0
 
-set ::env(DIODE_INSERTION_STRATEGY) 0
-set ::env(FILL_INSERTION) 0
-set ::env(TAP_DECAP_INSERTION) 0
-set ::env(CLOCK_TREE_SYNTH) 0
+# set ::env(DIODE_INSERTION_STRATEGY) 0
+# set ::env(FILL_INSERTION) 0
+# set ::env(TAP_DECAP_INSERTION) 0
+# set ::env(CLOCK_TREE_SYNTH) 0
 
 
