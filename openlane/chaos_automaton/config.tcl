@@ -32,11 +32,7 @@ set ::env(CLOCK_PERIOD) "25"
 # 25 ns is 40 MHz
 # 100 ns is 10 MHz
 
-set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 2920 3520"
-# "0 0 3006 3596"
-
-set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
+# set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 
 set ::env(PL_BASIC_PLACEMENT) 0
 set ::env(PL_TARGET_DENSITY) 0.2
@@ -53,8 +49,6 @@ set ::env(RT_MAX_LAYER) {met5}
 
 
 set ::env(DIODE_INSERTION_STRATEGY) 4 
-# If you're going to use multiple power domains, then disable cvc run.
-set ::env(RUN_CVC) 1
 
 set ::env(ROUTING_CORES) 16
 # Number of threads to be used during routing processes
@@ -109,3 +103,5 @@ set ::env(FP_PDN_MACRO_HOOKS) ".* vccd1 vssd1 vccd1 vssd1"
 
 # Pin placement template
 set ::env(FP_DEF_TEMPLATE) $::env(DESIGN_DIR)/user_project_wrapper.def
+
+set ::env(PDN_CFG) $script_dir/pdn_cfg.tcl
