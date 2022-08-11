@@ -80,4 +80,4 @@ set ::env(FP_PDN_CORE_RING) 1
 set ::env(SYNTH_USE_PG_PINS_DEFINES) "USE_POWER_PINS"
 set ::env(FP_PDN_VWIDTH) 18
 set ::env(FP_PDN_HWIDTH) 17
-set ::env(FP_PDN_MACRO_HOOKS) "chaos_array_inst.subarrayy\[*\].subarrayx\[*\].chaos_subarray_inst vccd1 vssd1 vccd1 vssd1"
+set ::env(FP_PDN_MACRO_HOOKS) ".* vccd1 vssd1 vccd1 vssd1"
