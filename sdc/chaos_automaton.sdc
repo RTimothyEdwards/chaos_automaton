@@ -1,6 +1,6 @@
 ###############################################################################
 # Created by write_sdc
-# Thu Aug 11 00:07:02 2022
+# Fri Aug 12 13:40:38 2022
 ###############################################################################
 current_design chaos_automaton
 ###############################################################################
@@ -452,9 +452,6 @@ set_output_delay 2.0000 -clock [get_clocks {wb_clk_i}] -add_delay [get_ports {io
 set_output_delay 2.0000 -clock [get_clocks {wb_clk_i}] -add_delay [get_ports {io_out[7]}]
 set_output_delay 2.0000 -clock [get_clocks {wb_clk_i}] -add_delay [get_ports {io_out[8]}]
 set_output_delay 2.0000 -clock [get_clocks {wb_clk_i}] -add_delay [get_ports {io_out[9]}]
-set_output_delay 2.0000 -clock [get_clocks {wb_clk_i}] -add_delay [get_ports {irq[0]}]
-set_output_delay 2.0000 -clock [get_clocks {wb_clk_i}] -add_delay [get_ports {irq[1]}]
-set_output_delay 2.0000 -clock [get_clocks {wb_clk_i}] -add_delay [get_ports {irq[2]}]
 set_output_delay 2.0000 -clock [get_clocks {wb_clk_i}] -add_delay [get_ports {la_data_out[0]}]
 set_output_delay 2.0000 -clock [get_clocks {wb_clk_i}] -add_delay [get_ports {la_data_out[100]}]
 set_output_delay 2.0000 -clock [get_clocks {wb_clk_i}] -add_delay [get_ports {la_data_out[101]}]
@@ -1158,9 +1155,6 @@ set_load -pin_load 0.0334 [get_ports {io_out[3]}]
 set_load -pin_load 0.0334 [get_ports {io_out[2]}]
 set_load -pin_load 0.0334 [get_ports {io_out[1]}]
 set_load -pin_load 0.0334 [get_ports {io_out[0]}]
-set_load -pin_load 0.0334 [get_ports {irq[2]}]
-set_load -pin_load 0.0334 [get_ports {irq[1]}]
-set_load -pin_load 0.0334 [get_ports {irq[0]}]
 set_load -pin_load 0.0334 [get_ports {la_data_out[127]}]
 set_load -pin_load 0.0334 [get_ports {la_data_out[126]}]
 set_load -pin_load 0.0334 [get_ports {la_data_out[125]}]
