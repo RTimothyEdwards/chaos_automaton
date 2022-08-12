@@ -156,8 +156,17 @@ module chaos_automaton #(
     output [`MPRJ_IO_PADS-1:0] io_out,
     output [`MPRJ_IO_PADS-1:0] io_oeb,
 
+    // Analog (direct connection to GPIO pad---use with caution)
+    // Note that analog I/O is not available on the 7 lowest-numbered
+    // GPIO pads, and so the analog_io indexing is offset from the
+    // GPIO indexing by 7 (also upper 2 GPIOs do not have analog_io).
+    inout [`MPRJ_IO_PADS-10:0] analog_io,
+
+    // Independent clock
+    input  user_clock2,
+
     // IRQ
-    output [2:0] irq
+    output [2:0] user_irq
 );
 
 `define IDLE	3'b000
@@ -293,7 +302,7 @@ module chaos_automaton #(
     assign iomem_we = wbs_sel_i & {4{wbs_we_i}};
 
     // IRQ
-    assign irq = 3'b000;	// Unused
+    assign user_irq = 3'b000;	// Unused
 
     // Instantiate the chaos cell array
 
