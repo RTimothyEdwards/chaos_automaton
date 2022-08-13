@@ -1,0 +1,25 @@
+
+Magic 8.3 revision 315 - Compiled on Fri Jul  1 17:37:25 UTC 2022.
+Starting magic under Tcl interpreter
+Using the terminal as the console.
+Using NULL graphics device.
+Processing system .magicrc file
+Error parsing "/home/alex/mpw_precheck/checks/tech-files/sky130A.magicrc": invalid command name "EF"
+Bad local startup file "/home/alex/mpw_precheck/checks/tech-files/sky130A.magicrc", continuing without.
+Loading "/home/alex/mpw_precheck/checks/drc_checks/magic/magic_drc_check.tcl" from command line.
+Don't know how to read GDS-II:
+Nothing in "cifinput" section of tech file.
+[INFO]: Loading user_project_wrapper
+
+File user_project_wrapper.mag couldn't be read
+No such file or directory
+Creating new cell
+"drc(full)" is not one of the DRC styles Magic knows.
+The current style is "default".
+The DRC styles are: default.
+No errors found.
+[INFO]: COUNT: 0
+[INFO]: Should be divided by 3 or 4
+[INFO]: DRC Checking DONE (/home/alex/chaos_automaton_Summer_2022/precheck_results/13_AUG_2022___16_45_45/outputs/reports/magic_drc_check.drc.report)
+[INFO]: Saving mag view with DRC errors(/home/alex/chaos_automaton_Summer_2022/precheck_results/13_AUG_2022___16_45_45/outputs/user_project_wrapper.magic.drc.mag)
+[INFO]: Saved
