@@ -1,0 +1,2 @@
+2022-08-12 22:48:31 - [INFO] - {{EXTRACTING FILES}} Extracting compressed files in: /home/alex/chaos_automaton_Summer_2022
+2022-08-12 22:48:39 - [CRITICAL] - {{GDS VIOLATION}} Both a compressed and an uncompressed version the gds exist, ensure only one design file exists.
