@@ -6,3 +6,4 @@ def/
 dependencies/
 spi/
 precheck_results/
+mgmt_core_wrapper/
