@@ -1,0 +1,4 @@
+chaos_test1:
+This test is not even set up to pass;  it will time out and "fail".  It is
+only meant to check that everything compiles and starts simulating without
+running into errors.  If it times out, then it has passed.

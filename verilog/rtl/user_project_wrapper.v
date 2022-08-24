@@ -181,8 +181,8 @@ module user_project_wrapper #(
 `define ADDRESS	8'h02		/* Address offset of cell address value */
 `define XFER	8'h03		/* Address offset of transfer bits */
 `define DIRECT  8'h04		/* Address offset of GPIO directions */
-`define SOURCE  8'h04		/* Address offset of GPIO source selection */
-`define DATATOP	8'h05		/* Address offset of start of data section */
+`define SOURCE  8'h05		/* Address offset of GPIO source selection */
+`define DATATOP	8'h06		/* Address offset of start of data section */
 
 `define MAXADDR (XSIZE * YSIZE)	/* Highest cell address plus one */
 
@@ -657,7 +657,7 @@ module user_project_wrapper #(
 	    ready <= 0;
 	end else begin
 	    ready <= 0;
-            if (valid && !ready && wbs_adr_i[31:8] == BASE_ADR[31:8]) begin
+            if (valid && !ready && (wbs_adr_i[31:8] == BASE_ADR[31:8])) begin
 		ready <= 1'b1;
 		wbs_dat_o <= rdata_pre;
 	    end
@@ -676,7 +676,16 @@ module user_project_wrapper #(
 
     always @(posedge wb_clk_i or posedge wb_rst_i) begin
         if (wb_rst_i) begin
+	    cell_addr <= 0;
+	    gpio_oeb <= 0;
             xfer_ctrl <= 0;
+	    west_loopback <= 0;
+	    east_loopback <= 0;
+	    north_loopback <= 0;
+	    south_loopback <= 0;
+	    gpio_input_slice <= 0;
+	    gpio_output_slice <= 0;
+	    latched_in <= 0;
 	    wdata <= 0;
 	    write <= 1'b0;
         end else begin
@@ -697,8 +706,9 @@ module user_project_wrapper #(
                     if (iomem_we[3]) wdata[63:56] <= wbs_dat_i[31:24];
 		    if (|iomem_we) write <= 1'b1;
 		end else if (address_sel) begin
-		    /* NOTE:  If XSIZE * YSIZE > 256, this must be adjusted */
-                    if (iomem_we[0]) cell_addr <= wbs_dat_i[7:0];
+		    // NOTE:  Assumes MAXADDR > 256 && MAXADDR < 65536
+                    if (iomem_we[0]) cell_addr[7:0] <= wbs_dat_i[7:0];
+                    if (iomem_we[1]) cell_addr[ASIZE-1:8] <= wbs_dat_i[ASIZE-1:8];
 		end else if (direct_sel) begin
                     if (iomem_we[0]) gpio_oeb[7:0] <= wbs_dat_i[7:0];
                     if (iomem_we[1]) gpio_oeb[15:8] <= wbs_dat_i[15:8];

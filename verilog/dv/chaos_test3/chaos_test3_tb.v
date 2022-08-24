@@ -17,10 +17,10 @@
 
 `timescale 1 ns / 1 ps
 
-`include "uprj_netlists.v"
-`include "caravel_netlists.v"
-`include "spiflash.v"
-`include "tbuart.v"
+// `include "uprj_netlists.v"
+// `include "caravel_netlists.v"
+// `include "spiflash.v"
+// `include "tbuart.v"
 
 /*
  * This testbench expands upon test2 by doing a complete load of data
@@ -57,12 +57,12 @@ module chaos_test3_tb;
 
 	initial begin
 		$dumpfile("chaos_test3.vcd");
-		// $dumpvars(0, chaos_test3_tb);
+		$dumpvars(0, chaos_test3_tb);
 		// Check the overall signals in the chaos automaton without
 		// saving tons of data from the 400 individual cells.
-		$dumpvars(1, chaos_test3_tb);
-		$dumpvars(1, chaos_test3_tb.uut.mprj.chaos);
-		$dumpvars(1, chaos_test3_tb.uut.mprj.chaos.chaos_array_inst);
+		// $dumpvars(1, chaos_test3_tb);
+		// $dumpvars(1, chaos_test3_tb.uut.mprj.chaos);
+		// $dumpvars(1, chaos_test3_tb.uut.mprj.chaos.chaos_array_inst);
 
 		// Test break-out cell (see note in chaos_automaton.v)
 		// $dumpvars(1, chaos_test3_tb.uut.mprj.chaos.chaos_array_inst.chaos_cell_inst_0_0);
@@ -70,15 +70,15 @@ module chaos_test3_tb;
 		// $dumpvars(0, chaos_test3_tb.uut.mprj.chaos.chaos_array_inst.chaos_cell_inst_0_0.lutdata[3]);
 
 		// Check where in the program the CPU is operating
-		$dumpvars(1, chaos_test3_tb.uut.soc.soc.cpu.picorv32_core.dbg_insn_addr);
-		$dumpvars(1, chaos_test3_tb.uut.soc.soc.cpu.picorv32_core.dbg_insn_opcode);
-		$dumpvars(1, chaos_test3_tb.uut.soc.soc.cpu.picorv32_core.dbg_ascii_instr);
+		// $dumpvars(1, chaos_test3_tb.uut.soc.soc.cpu.picorv32_core.dbg_insn_addr);
+		// $dumpvars(1, chaos_test3_tb.uut.soc.soc.cpu.picorv32_core.dbg_insn_opcode);
+		// $dumpvars(1, chaos_test3_tb.uut.soc.soc.cpu.picorv32_core.dbg_ascii_instr);
 		// Check GPIO serial load, which gates the 1st part of the simulation
-		$dumpvars(1, chaos_test3_tb.uut.mprj_io_loader_clock);
-		$dumpvars(1, chaos_test3_tb.uut.mprj_io_loader_resetn);
+		// $dumpvars(1, chaos_test3_tb.uut.mprj_io_loader_clock);
+		// $dumpvars(1, chaos_test3_tb.uut.mprj_io_loader_resetn);
 
 		// Repeat cycles of 1000 clock edges as needed to complete testbench
-		repeat (700) begin
+		repeat (8000) begin
 			repeat (1000) @(posedge clock);
 			// $display("+1000 cycles");
 		end
