@@ -17,10 +17,10 @@
 
 `timescale 1 ns / 1 ps
 
-`include "uprj_netlists.v"
-`include "caravel_netlists.v"
-`include "spiflash.v"
-`include "tbuart.v"
+// `include "uprj_netlists.v"
+// `include "caravel_netlists.v"
+// `include "spiflash.v"
+// `include "tbuart.v"
 
 /*
  * This testbench expands on test1 by loading one cell with data
@@ -58,27 +58,23 @@ module chaos_test2_tb;
 
 	initial begin
 		$dumpfile("chaos_test2.vcd");
-		// $dumpvars(0, chaos_test2_tb);
+		$dumpvars(0, chaos_test2_tb);
 		// Check the overall signals in the chaos automaton without
 		// saving tons of data from the 400 individual cells.
-		$dumpvars(1, chaos_test2_tb);
-		$dumpvars(1, chaos_test2_tb.uut.mprj.chaos);
-		$dumpvars(1, chaos_test2_tb.uut.mprj.chaos.chaos_array_inst);
-		// Check where in the program the CPU is operating
-		$dumpvars(1, chaos_test2_tb.uut.soc.soc.cpu.picorv32_core.dbg_insn_addr);
-		$dumpvars(1, chaos_test2_tb.uut.soc.soc.cpu.picorv32_core.dbg_insn_opcode);
-		$dumpvars(1, chaos_test2_tb.uut.soc.soc.cpu.picorv32_core.dbg_ascii_instr);
+		// $dumpvars(1, chaos_test2_tb);
+		// $dumpvars(1, chaos_test2_tb.uut.mprj.chaos);
+		// $dumpvars(1, chaos_test2_tb.uut.mprj.chaos.chaos_array_inst);
 		// Check GPIO serial load, which gates the 1st part of the simulation
-		$dumpvars(1, chaos_test2_tb.uut.mprj_io_loader_clock);
-		$dumpvars(1, chaos_test2_tb.uut.mprj_io_loader_resetn);
+		// $dumpvars(1, chaos_test2_tb.uut.mprj_io_loader_clock);
+		// $dumpvars(1, chaos_test2_tb.uut.mprj_io_loader_resetn);
 
 		// Check GPIO serial data at several points
-		$dumpvars(0, chaos_test2_tb.uut.mprj.chaos.chaos_array_inst.testshiftreg0);
-		$dumpvars(0, chaos_test2_tb.uut.mprj.chaos.chaos_array_inst.testshiftreg10);
-		$dumpvars(0, chaos_test2_tb.uut.mprj.chaos.chaos_array_inst.testshiftreg20);
+		// $dumpvars(0, chaos_test2_tb.uut.mprj.chaos.chaos_array_inst.testshiftreg0);
+		// $dumpvars(0, chaos_test2_tb.uut.mprj.chaos.chaos_array_inst.testshiftreg10);
+		// $dumpvars(0, chaos_test2_tb.uut.mprj.chaos.chaos_array_inst.testshiftreg20);
 
 		// Repeat cycles of 1000 clock edges as needed to complete testbench
-		repeat (200) begin
+		repeat (450) begin
 			repeat (1000) @(posedge clock);
 			// $display("+1000 cycles");
 		end

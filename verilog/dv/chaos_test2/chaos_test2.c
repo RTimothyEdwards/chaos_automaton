@@ -16,8 +16,10 @@
  */
 
 // This include is relative to $CARAVEL_PATH (see Makefile)
-#include "verilog/dv/caravel/defs.h"
-#include "verilog/dv/caravel/stub.c"
+// #include "verilog/dv/caravel/defs.h"
+// #include "verilog/dv/caravel/stub.c"
+
+#include "defs.h"
 
 // --------------------------------------------------------
 
@@ -26,6 +28,14 @@
 
 #define reg_user_address  (*(volatile uint32_t*)0x30000008)
 #define reg_user_transfer (*(volatile uint32_t*)0x3000000c)
+
+#define reg_user_direct (*(volatile uint32_t*)0x30000010)
+#define reg_user_source (*(volatile uint32_t*)0x30000014)
+#define reg_user_data0 (*(volatile uint32_t*)0x30000018)
+#define reg_user_data1 (*(volatile uint32_t*)0x3000001c)
+#define reg_user_data2 (*(volatile uint32_t*)0x30000020)
+#define reg_user_data3 (*(volatile uint32_t*)0x30000024)
+#define reg_user_data4 (*(volatile uint32_t*)0x30000028)
 
 /* Configuration further refined to each LUT (16 bits per LUT) */
 #define reg_user_config_N (*(volatile uint16_t*)0x30000000)
@@ -46,16 +56,6 @@ void main()
 {
 	uint16_t LUTdata;
 
-	/* Set up the housekeeping SPI to be connected internally so	*/
-	/* that external pin changes don't affect it.			*/
-
-	reg_spimaster_config = 0xa002;	// Enable, prescaler = 2,
-                                        // connect to housekeeping SPI
-
-	// Connect the housekeeping SPI to the SPI master
-	// so that the CSB line is not left floating.  This allows
-	// all of the GPIO pins to be used for user functions.
-
 	// The upper GPIO pins are configured to be output
 	// and accessble to the management SoC.
 	// Used to flad the start/end of a test 
@@ -64,7 +64,6 @@ void main()
 	// the project count value, although this test is
 	// designed to read the project count through the
 	// logic analyzer probes.
-	// I/O 6 is configured for the UART Tx line
 
         reg_mprj_io_31 = GPIO_MODE_MGMT_STD_OUTPUT;
         reg_mprj_io_30 = GPIO_MODE_MGMT_STD_OUTPUT;
@@ -92,7 +91,7 @@ void main()
         reg_mprj_io_9  = GPIO_MODE_MGMT_STD_OUTPUT;
         reg_mprj_io_8  = GPIO_MODE_MGMT_STD_OUTPUT;
         reg_mprj_io_7  = GPIO_MODE_MGMT_STD_OUTPUT;
-	// I/O 6 left out on purpose---disruptive to the simulation
+        reg_mprj_io_6  = GPIO_MODE_MGMT_STD_OUTPUT;
         reg_mprj_io_5  = GPIO_MODE_MGMT_STD_OUTPUT;
         reg_mprj_io_4  = GPIO_MODE_MGMT_STD_OUTPUT;
         reg_mprj_io_3  = GPIO_MODE_MGMT_STD_OUTPUT;
@@ -100,15 +99,12 @@ void main()
         reg_mprj_io_1  = GPIO_MODE_MGMT_STD_OUTPUT;
         reg_mprj_io_0  = GPIO_MODE_MGMT_STD_OUTPUT;
 
-        reg_mprj_io_6  = GPIO_MODE_MGMT_STD_OUTPUT;
-
-	// Set UART clock to 64 kbaud (enable before I/O configuration)
-	reg_uart_clkdiv = 625;
-	reg_uart_enable = 1;
-
         /* Apply configuration */
         reg_mprj_xfer = 1;
         while (reg_mprj_xfer == 1);
+
+	/* Enable wishbone signaling in the user project */
+	reg_wb_enable = 1;
 
 	// Flag start of the test 
 	reg_mprj_datal = 0xAB400000;
@@ -163,8 +159,8 @@ void main()
 
 	// Flag end of test
 	reg_mprj_datal = 0xAB510000;
-	// The following makes the simulation very long.  Moved after end-of-test
-	// is flagged so that simulation ends first.
-	print("\nMonitor: Test 2 Passed\n\n");
+
+	// Loop forever
+	while (1) {};
 }
 

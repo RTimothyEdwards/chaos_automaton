@@ -16,8 +16,10 @@
  */
 
 // This include is relative to $CARAVEL_PATH (see Makefile)
-#include "verilog/dv/caravel/defs.h"
-#include "verilog/dv/caravel/stub.c"
+// #include "verilog/dv/caravel/defs.h"
+// #include "verilog/dv/caravel/stub.c"
+
+#include "defs.h"
 
 // --------------------------------------------------------
 
@@ -35,7 +37,7 @@ void main()
 	/* Set up the housekeeping SPI to be connected internally so	*/
 	/* that external pin changes don't affect it.			*/
 
-	reg_spimaster_config = 0xa002;	// Enable, prescaler = 2,
+	// reg_spimaster_config = 0xa002;	// Enable, prescaler = 2,
                                         // connect to housekeeping SPI
 
 	// Connect the housekeeping SPI to the SPI master
@@ -88,7 +90,7 @@ void main()
         reg_mprj_io_6  = GPIO_MODE_MGMT_STD_OUTPUT;
 
 	// Set UART clock to 64 kbaud (enable before I/O configuration)
-	reg_uart_clkdiv = 625;
+	// reg_uart_clkdiv = 625;
 	reg_uart_enable = 1;
 
         /* Apply configuration */
@@ -117,8 +119,8 @@ void main()
 			break;
 		}
 	}
-	print("\n");
-	print("Monitor: Test 2 Passed\n\n");	// Makes simulation very long!
+	// print("\n");
+	// print("Monitor: Test 2 Passed\n\n");	// Makes simulation very long!
 	reg_mprj_datal = 0xAB510000;
 }
 

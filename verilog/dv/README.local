@@ -1,0 +1,24 @@
+Simulation notes:
+--------------------------------
+Design environment setup:
+(Note that default setup uses the "lite" version of the SoC, which
+is okay for simulation.)
+
+	mkdir dependencies
+	setenv OPENLANE_ROOT /home/tim/gits/chaos_automaton_final/dependencies/openlane_src
+	setenv PDK_ROOT /home/tim/gits/chaos_automaton_final/dependencies/pdks
+	setenv PDK sky130B
+	setenv PATH ${PATH}:/home/tim/.local/bin
+	make setup
+	
+
+Simulation environment setup:
+
+	setenv CORE_VERILOG_PATH /home/tim/gits/chaos_automaton_final/mgmt_core_wrapper/verilog
+	setenv DESIGNS /home/tim/gits/chaos_automaton_final
+	setenv GCC_PATH /opt/riscv32imc/bin
+	setenv GCC_PREFIX riscv32-unknown-elf
+	setenv MCW_ROOT /home/tim/gits/chaos_automaton_final/mgmt_core_wrapper
+
+	cd verilog/dv/chaos_test2	(for example)
+	make
