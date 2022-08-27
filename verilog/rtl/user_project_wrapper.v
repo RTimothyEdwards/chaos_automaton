@@ -191,6 +191,7 @@ module user_project_wrapper #(
     reg [2:0] xfer_state;	/* state of the data transfer		*/
     reg [1:0] xfer_ctrl;	/* Configuration transfer trigger bits	*/
     reg [63:0] config_data;	/* 64 bits to read or write configuration */
+    reg local_reset;		/* Reset applied from a register	*/
 
     reg [ASIZE - 1:0] cell_addr;	/* Core cell to address	*/
     reg [ASIZE - 1:0] cell_offset;	/* Current offset of shift register */
@@ -223,6 +224,7 @@ module user_project_wrapper #(
     reg [31:0] wbs_dat_o;
     reg [63:0] wdata;
     reg write;
+    wire all_cell_reset;
 
     // Direction for each GPIO (32 used)
     reg [31:0] gpio_oeb;
@@ -276,7 +278,7 @@ module user_project_wrapper #(
     // GPIOs can be clustered on either end or in the center of the array
     // side, or distributed along the side (1 GPIO per 5 array cells)
     reg [1:0] gpio_output_slice;
-    reg [1:0] gpio_input_slice;
+    reg [2:0] gpio_input_slice;
 
     // Registered GPIO directions go directly to io_oeb[37:6].  Leave the
     // lower 6 GPIO to the management processor.
@@ -301,6 +303,8 @@ module user_project_wrapper #(
     assign wbs_ack_o = ready;
     assign iomem_we = wbs_sel_i & {4{wbs_we_i}};
 
+    assign all_cell_reset = wb_rst_i | local_reset;
+
     // IRQ
     assign user_irq = 3'b000;	// Unused
 
@@ -318,7 +322,7 @@ module user_project_wrapper #(
 	     .vssd1(vssd1),
 	`endif
         .clk(clk),
-        .reset(wb_rst_i),
+        .reset(all_cell_reset),
         .hold(hold),
         .rdata(rdata),
         .wdata(wdata),
@@ -395,39 +399,42 @@ module user_project_wrapper #(
     // the arrays (high to low index is top to bottom, or right to left).
 
     assign gpio_east = 	// I/O 15 to 6
-	(gpio_input_slice == 0) ?	// Distributed
+	(gpio_input_slice == 0) ? 50'b0 :	// No pad input
+	(gpio_input_slice == 1) ?	// Distributed
 		{2'b0, io_in[15], 4'b0, io_in[14], 4'b0, io_in[13],
 		 4'b0, io_in[12], 4'b0, io_in[11], 4'b0, io_in[10],
 		 4'b0, io_in[9],  4'b0, io_in[8],  4'b0, io_in[7],
 		 4'b0, io_in[6],  2'b0} :
-	(gpio_input_slice == 1) ? {40'b0, io_in[15:6]} :	// Bottom shifted
-	(gpio_input_slice == 2) ? {20'b0, io_in[15:6], 20'b0} : // Centered
+	(gpio_input_slice == 2) ? {40'b0, io_in[15:6]} :	// Bottom shifted
+	(gpio_input_slice == 3) ? {20'b0, io_in[15:6], 20'b0} : // Centered
 	{io_in[15:6], 40'b0};					// Top shifted
 
     assign gpio_north = 	// I/O 21 to 16
-	(gpio_input_slice == 0) ?	// Distributed
+	(gpio_input_slice == 0) ? 30'b0 :	// No pad input
+	(gpio_input_slice == 1) ?	// Distributed
 		{2'b0, io_in[16], 4'b0, io_in[17], 4'b0, io_in[18],
 		 4'b0, io_in[19], 4'b0, io_in[20], 4'b0, io_in[21], 2'b0} :
-	(gpio_input_slice == 1) ?	// Right shifted
+	(gpio_input_slice == 2) ?	// Right shifted
 		{14'b0, io_in[16], io_in[17], io_in[18], io_in[19],
 		io_in[20], io_in[21]} :
-	(gpio_input_slice == 2) ?	// Centered
+	(gpio_input_slice == 3) ?	// Centered
 		{7'b0, io_in[16], io_in[17], io_in[18], io_in[19],
 		io_in[20], io_in[21], 7'b0} :
 	{io_in[16], io_in[17], io_in[18], io_in[19], io_in[20],
 		io_in[21], 4'b0};	// Left shifted
 
     assign gpio_west = 	// I/O 22 to 31
-	(gpio_input_slice == 0) ?	// Distributed
+	(gpio_input_slice == 0) ? 50'b0 :	// No pad input
+	(gpio_input_slice == 1) ?	// Distributed
 		{2'b0, io_in[22], 4'b0, io_in[23], 4'b0, io_in[24],
 		 4'b0, io_in[25], 4'b0, io_in[26], 4'b0, io_in[27],
 		 4'b0, io_in[28], 4'b0, io_in[29], 4'b0, io_in[30],
 		 4'b0, io_in[31],  2'b0} :
-	(gpio_input_slice == 1) ?	// Bottom shifted
+	(gpio_input_slice == 2) ?	// Bottom shifted
 		{40'b0, io_in[22], io_in[23], io_in[24], io_in[25],
 		io_in[26], io_in[27], io_in[28], io_in[29], io_in[31],
 		io_in[31]} :
-	(gpio_input_slice == 2) ?	// Centered
+	(gpio_input_slice == 3) ?	// Centered
 		{20'b0, io_in[22], io_in[23], io_in[24], io_in[25],
 		io_in[26], io_in[27], io_in[28], io_in[29], io_in[31],
 		io_in[31], 20'b0} :
@@ -436,11 +443,12 @@ module user_project_wrapper #(
 		40'b0};					// Top shifted
 
     assign gpio_south = 	// I/O 32 to 37
-	(gpio_input_slice == 0) ?	// Distributed
+	(gpio_input_slice == 0) ? 30'b0 :	// No pad input
+	(gpio_input_slice == 1) ?	// Distributed
 		{2'b0, io_in[37], 4'b0, io_in[36], 4'b0, io_in[35],
 		 4'b0, io_in[34], 4'b0, io_in[33], 4'b0, io_in[32], 2'b0} :
-	(gpio_input_slice == 1) ? {14'b0, io_in[37:32]} :	// Right shifted
-	(gpio_input_slice == 2) ? {7'b0, io_in[37:32], 7'b0} :	// Centered
+	(gpio_input_slice == 2) ? {14'b0, io_in[37:32]} :	// Right shifted
+	(gpio_input_slice == 3) ? {7'b0, io_in[37:32], 7'b0} :	// Centered
 	{io_in[37:32], 14'b0};					// Left shifted
 
     // East side
@@ -633,7 +641,7 @@ module user_project_wrapper #(
 	end else if (direct_sel) begin
 	    rdata_pre = gpio_oeb;
 	end else if (source_sel) begin
-	    rdata_pre = {10'b0, gpio_output_slice, 2'b0, gpio_input_slice,
+	    rdata_pre = {9'b0, gpio_output_slice, 1'b0, gpio_input_slice,
 			1'b0, north_loopback, 1'b0, east_loopback,
 			1'b0, south_loopback, 1'b0, west_loopback};
 	end else if (data_sel[0]) begin
@@ -672,13 +680,12 @@ module user_project_wrapper #(
     assign latched_in_south = latched_in[YSIZE+XSIZE-1:YSIZE];
     assign latched_in_west = latched_in[YSIZE-1:0];
 
-    /* Write data */
-
     always @(posedge wb_clk_i or posedge wb_rst_i) begin
         if (wb_rst_i) begin
 	    cell_addr <= 0;
 	    gpio_oeb <= 0;
             xfer_ctrl <= 0;
+            local_reset <= 0;
 	    west_loopback <= 0;
 	    east_loopback <= 0;
 	    north_loopback <= 0;
@@ -692,7 +699,10 @@ module user_project_wrapper #(
 	    write <= 1'b0;
             if (valid && !ready && wbs_adr_i[31:8] == BASE_ADR[31:8]) begin
                 if (xfer_sel) begin
-                    if (iomem_we[0]) xfer_ctrl <= wbs_dat_i[1:0];
+                    if (iomem_we[0]) begin
+			xfer_ctrl <= wbs_dat_i[1:0];
+			local_reset <= wbs_dat_i[2];
+		    end
 		end else if (config_sel[0]) begin
                     if (iomem_we[0]) wdata[7:0] <= wbs_dat_i[7:0];
                     if (iomem_we[1]) wdata[15:8] <= wbs_dat_i[15:8];
@@ -724,8 +734,8 @@ module user_project_wrapper #(
 			 north_loopback <= wbs_dat_i[6:4];
 		    end
                     if (iomem_we[2]) begin
-			 gpio_input_slice <= wbs_dat_i[1:0];
-			 gpio_output_slice <= wbs_dat_i[5:4];
+			 gpio_input_slice <= wbs_dat_i[2:0];
+			 gpio_output_slice <= wbs_dat_i[6:4];
 		    end
 		end else if (data_sel[0]) begin
                     if (iomem_we[0]) latched_in[7:0] <= wbs_dat_i[7:0];
@@ -755,6 +765,7 @@ module user_project_wrapper #(
                 end
             end else begin
                 xfer_ctrl <= 0;      // Immediately self-resetting
+                local_reset <= 0;    // Immediately self-resetting
             end
         end
     end
@@ -855,10 +866,10 @@ module chaos_array #(
     output [XSIZE-1:0] data_out_north,
     output [XSIZE-1:0] data_out_south
 );
-    wire [XSIZE - 1: 0] uconn [YTOP: 0];
-    wire [XSIZE - 1: 0] dconn [YTOP: 0];
-    wire [YSIZE - 1: 0] rconn [XTOP: 0];
-    wire [YSIZE - 1: 0] lconn [XTOP: 0];
+    wire [XSIZE - 1: 0] uconn [YTOP: 0];	// Upward moving data
+    wire [XSIZE - 1: 0] dconn [YTOP: 0];	// Downward moving data
+    wire [YSIZE - 1: 0] rconn [XTOP: 0];	// Rightward moving data
+    wire [YSIZE - 1: 0] lconn [XTOP: 0];	// Leftward moving data
 
     wire [YTOP - 1: 0] shiftreg [XTOP: 0];
     wire [YTOP - 1: 0] clkarray [XTOP: 0];
@@ -874,18 +885,18 @@ module chaos_array #(
     //       |^|^      |^|^      |^|^   
     //       v|v|      v|v|      v|v|   
     //     +------+  +------+  +------+
-    //  l->|      |->|      |->|      |->l
-    //  r<-|      |<-|      |<-|      |<-r
-    //  l->|      |->|      |->|      |->l
-    //  r<-|      |<-|      |<-|      |<-r
+    //  r->|      |->|      |->|      |->r
+    //  l<-|      |<-|      |<-|      |<-l
+    //  r->|      |->|      |->|      |->r
+    //  l<-|      |<-|      |<-|      |<-l
     //     +------+  +------+  +------+
     //       |^|^      |^|^      |^|^   
     //       v|v|      v|v|      v|v|   
     //     +------+  +------+  +------+
-    //  l->|      |->|      |->|      |->l
-    //  r<-|      |<-|      |<-|      |<-r
-    //  l->|      |->|      |->|      |->l
-    //  r<-|      |<-|      |<-|      |<-r
+    //  r->|      |->|      |->|      |->r
+    //  l<-|      |<-|      |<-|      |<-l
+    //  r->|      |->|      |->|      |->r
+    //  l<-|      |<-|      |<-|      |<-l
     //     +------+  +------+  +------+
     //       |^|^      |^|^      |^|^   
     //       v|v|      v|v|      v|v|   
@@ -918,10 +929,10 @@ module chaos_array #(
     assign data_out_east = rconn[XTOP][YSIZE - 1:0];
     assign data_out_west = lconn[0][YSIZE - 1:0];
 
-    assign dconn[YTOP][XSIZE - 1:0] = data_in_south;
-    assign uconn[0][XSIZE - 1:0] = data_in_north;
-    assign rconn[0][YSIZE - 1:0] = data_in_east;
-    assign lconn[XTOP][YSIZE - 1:0] = data_in_west;
+    assign dconn[YTOP][XSIZE - 1:0] = data_in_north;
+    assign uconn[0][XSIZE - 1:0] = data_in_south;
+    assign rconn[0][YSIZE - 1:0] = data_in_west;
+    assign lconn[XTOP][YSIZE - 1:0] = data_in_east;
 
     genvar i, j;
 
