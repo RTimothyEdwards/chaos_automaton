@@ -53,11 +53,11 @@ module chaos_test1_tb;
 	assign mprj_io[3] = (CSB == 1'b1) ? 1'b1 : 1'bz;
 
 	initial begin
-		// $dumpfile("chaos_test1.vcd");
-		// $dumpvars(0, chaos_test1_tb);
+		$dumpfile("chaos_test1.vcd");
+		$dumpvars(0, chaos_test1_tb);
 
 		// Repeat cycles of 1000 clock edges as needed to complete testbench
-		repeat (200) begin
+		repeat (100) begin
 			repeat (1000) @(posedge clock);
 			// $display("+1000 cycles");
 		end

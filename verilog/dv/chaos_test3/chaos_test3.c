@@ -115,6 +115,9 @@ void main()
 	// Apply input values first, so that the bits are valid
 	// when the load process toggles "hold" on all cells.
 
+	// Apply a reset to all cells (auto-clearing bit)
+	reg_user_transfer = 4;
+
 	// Apply zero bits to all inputs
  	reg_user_data0 = 0;
  	reg_user_data1 = 0;

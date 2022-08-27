@@ -234,16 +234,16 @@ module chaos_subarray #(
 
 	/* Connect the endpoints of the array to the inputs and outputs of the module */
 
-	for (j = 0; j < YSIZE; j=j+1) begin: connx
-	    assign rconn[XSIZE][j] = ieast[j];
-	    assign lconn[0][j] = iwest[j];
+	for (j = 0; j < YSIZE; j=j+1) begin: conny
+	    assign rconn[0][j] = iwest[j];
+	    assign lconn[XSIZE][j] = ieast[j];
 	    assign oeast[j] = rconn[XSIZE][j];
 	    assign owest[j] = lconn[0][j];
 	end
 
-	for (i = 0; i < XSIZE; i=i+1) begin: conny
-	    assign uconn[YSIZE][i] = inorth[i];
-	    assign dconn[0][i] = isouth[i];
+	for (i = 0; i < XSIZE; i=i+1) begin: connx
+	    assign uconn[0][i] = isouth[i];
+	    assign dconn[YSIZE][i] = inorth[i];
 	    assign onorth[i] = uconn[YSIZE][i];
 	    assign osouth[i] = dconn[0][i];
 	end

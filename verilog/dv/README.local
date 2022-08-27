@@ -12,7 +12,7 @@ is okay for simulation.)
 	make setup
 	
 
-Simulation environment setup:
+Simulation environment setup (also requires PDK_ROOT and PDK from above):
 
 	setenv CORE_VERILOG_PATH /home/tim/gits/chaos_automaton_final/mgmt_core_wrapper/verilog
 	setenv DESIGNS /home/tim/gits/chaos_automaton_final
