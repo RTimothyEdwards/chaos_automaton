@@ -37,7 +37,6 @@
 #define reg_user_data1  (*(volatile uint32_t*)0x3000001c)
 #define reg_user_data2  (*(volatile uint32_t*)0x30000020)
 #define reg_user_data3  (*(volatile uint32_t*)0x30000024)
-#define reg_user_data4  (*(volatile uint32_t*)0x30000028)
 
 /* Configuration further refined to each LUT (16 bits per LUT) */
 #define reg_user_config_N (*(volatile uint16_t*)0x30000000)
@@ -123,7 +122,6 @@ void main()
  	reg_user_data1 = 0;
  	reg_user_data2 = 0;
  	reg_user_data3 = 0;
- 	reg_user_data4 = 0;
 
 	// Apply address 0 (meaning shift by 1 address position each time)
 	reg_user_address = 0;
@@ -137,7 +135,8 @@ void main()
 	reg_user_config_W = 0xff00;
 	reg_user_config_E = 0xff00;
 
-	for (i = 0; i < 1500; i++)
+	// Note:  900 = 30 x 30, or the total number of cells.
+	for (i = 0; i < 900; i++)
 	{
 	    // Cycle register to load position
 	    reg_user_transfer = 1;
@@ -164,21 +163,18 @@ void main()
 	reg_mprj_datal = reg_user_data1;
 	reg_mprj_datal = reg_user_data2;
 	reg_mprj_datal = reg_user_data3;
-	reg_mprj_datal = reg_user_data4;
 
 	// Apply one bits to all inputs (with logic analyzer)
  	reg_user_data0 = -1;
  	reg_user_data1 = -1;
  	reg_user_data2 = -1;
  	reg_user_data3 = -1;
- 	reg_user_data4 = -1;
 
 	// Read bits from all outputs (should be one)---apply to GPIO out
 	reg_mprj_datal = reg_user_data0;
 	reg_mprj_datal = reg_user_data1;
 	reg_mprj_datal = reg_user_data2;
 	reg_mprj_datal = reg_user_data3;
-	reg_mprj_datal = reg_user_data4;
 	
 	// Flag end of test
 	reg_mprj_datal = 0xAB510000;
