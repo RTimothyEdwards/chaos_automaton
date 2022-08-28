@@ -99,15 +99,9 @@
  * the cell address, (2) Apply the shift cycle, (3) Read the configuration
  * data, (4) Apply the finish cycle.
  *
+ *
  * This version uses the chaos_subarray, which is intended to be
  * prehardened as a macro and tiled in the top level.
- *
- * The user project wrapper is currently hard-coded to a specific
- * array size due to the complexity of aligning the array inputs and
- * outputs to the GPIO pins.  The original version of this wrapper
- * was hard-coded to a 30x50 array, and has been copied back to
- * user_project_wrapper_30x50.v.  The current version is hard-coded
- * to a 30x30 array.
  *-------------------------------------------------------------
  */
 
@@ -123,7 +117,7 @@
 
 module user_project_wrapper #(
     parameter XSIZE = 30,	// Total number of cells left to right
-    parameter YSIZE = 30,	// Total number of cells top to bottom
+    parameter YSIZE = 50,	// Total number of cells top to bottom
     parameter XTOP = 3,		// Number of sub-arrays left to right
     parameter YTOP = 5,		// Number of sub-arrays top to bottom
     parameter ASIZE = 11,	// Enough bits to count XSIZE * YSIZE
@@ -214,8 +208,8 @@ module user_project_wrapper #(
     wire source_sel;
 
     // NOTE:  This should be parameterized.
-    // For the 30x30 array, there are 30+30+30+30 = 120 periphery bits =
-    // 4 words of 32 bits.  This is hard-coded for convenience.  If the
+    // For the 50x30 array, there are 50+50+30+30 = 160 periphery bits =
+    // 5 words of 32 bits.  This is hard-coded for convenience.  If the
     // array size changes, this needs to be changed as well.  Needs to be
     // converted to a "generate" block.
     wire [4:0] data_sel;
@@ -298,11 +292,12 @@ module user_project_wrapper #(
     assign direct_sel = (wbs_adr_i[7:2] == `DIRECT);
     assign source_sel = (wbs_adr_i[7:2] == `SOURCE);
 
-    // Hard-coded to 4 words;  see note above
+    // Hard-coded to 5 words;  see note above
     assign data_sel[0] = (wbs_adr_i[7:2] == (`DATATOP + 0));
     assign data_sel[1] = (wbs_adr_i[7:2] == (`DATATOP + 1));
     assign data_sel[2] = (wbs_adr_i[7:2] == (`DATATOP + 2));
     assign data_sel[3] = (wbs_adr_i[7:2] == (`DATATOP + 3));
+    assign data_sel[4] = (wbs_adr_i[7:2] == (`DATATOP + 4));
 
     assign valid = wbs_cyc_i && wbs_stb_i; 
     assign wbs_ack_o = ready;
@@ -394,230 +389,235 @@ module user_project_wrapper #(
     // Define I/O input slices
     // NOTE:  This is hard-coded.  There are 38 GPIOs.  Assigning 32 of them
     // (GPIO 37 to 6) to array inputs and outputs.  These are arranged as
-    // 8 on the sides and 8 on the top and bottom.  Depending on the selection,
-    // these can be injected into various places around the array.
+    // 10 on the sides and 6 on the top and bottom.  These are further sub-
+    // divided into 5 inputs and 5 outputs on the sides, and 3 inputs and
+    // 3 outputs on top and bottom.  Depending on the selection, these
+    // can be injected into various places around the array.
 
     // Another note:  It probably makes more sense to define vectors for
     // io_in_east, io_in_north, etc., and align them in the direction of
     // the arrays (high to low index is top to bottom, or right to left).
 
-    assign gpio_east = 	// I/O 13 to 6
-	(gpio_input_slice == 0) ? 22'b0 :	// No pad input
+    assign gpio_east = 	// I/O 15 to 6
+	(gpio_input_slice == 0) ? 50'b0 :	// No pad input
 	(gpio_input_slice == 1) ?	// Distributed
-		{io_in[13], 3'b0, io_in[12], 3'b0, io_in[11], 3'b0,
-		 io_in[10],  3'b0, io_in[9],  3'b0, io_in[8], 3'b0,
-		 io_in[7],  3'b0, io_in[6], 1'b0} :
-	(gpio_input_slice == 2) ? {22'b0, io_in[15:6]} :	// Bottom shifted
-	(gpio_input_slice == 3) ? {11'b0, io_in[15:6], 11'b0} : // Centered
-	{io_in[15:6], 22'b0};					// Top shifted
+		{2'b0, io_in[15], 4'b0, io_in[14], 4'b0, io_in[13],
+		 4'b0, io_in[12], 4'b0, io_in[11], 4'b0, io_in[10],
+		 4'b0, io_in[9],  4'b0, io_in[8],  4'b0, io_in[7],
+		 4'b0, io_in[6],  2'b0} :
+	(gpio_input_slice == 2) ? {40'b0, io_in[15:6]} :	// Bottom shifted
+	(gpio_input_slice == 3) ? {20'b0, io_in[15:6], 20'b0} : // Centered
+	{io_in[15:6], 40'b0};					// Top shifted
 
-    assign gpio_north = 	// I/O 21 to 14
-	(gpio_input_slice == 0) ? 22'b0 :	// No pad input
+    assign gpio_north = 	// I/O 21 to 16
+	(gpio_input_slice == 0) ? 30'b0 :	// No pad input
 	(gpio_input_slice == 1) ?	// Distributed
-		{io_in[14], 3'b0, io_in[15], 3'b0, io_in[16], 3'b0,
-		 io_in[17],  3'b0, io_in[18],  3'b0, io_in[19], 3'b0,
-		 io_in[20],  3'b0, io_in[21], 1'b0} :
-	(gpio_input_slice == 2) ?		// Right shifted
-		 {22'b0, io_in[14], io_in[15], io_in[16], io_in[17],
-		  io_in[18], io_in[19], io_in[20], io_in[21]} :
-	(gpio_input_slice == 3) ?		// Centered
-		 {11'b0, io_in[14], io_in[15], io_in[16], io_in[17],
-		  io_in[18], io_in[19], io_in[20], io_in[21], 11'b0} :
-	{io_in[14], io_in[15], io_in[16], io_in[17], io_in[18],
-		io_in[19], io_in[20], io_in[21], 22'b0};	// Left shifted
+		{2'b0, io_in[16], 4'b0, io_in[17], 4'b0, io_in[18],
+		 4'b0, io_in[19], 4'b0, io_in[20], 4'b0, io_in[21], 2'b0} :
+	(gpio_input_slice == 2) ?	// Right shifted
+		{14'b0, io_in[16], io_in[17], io_in[18], io_in[19],
+		io_in[20], io_in[21]} :
+	(gpio_input_slice == 3) ?	// Centered
+		{7'b0, io_in[16], io_in[17], io_in[18], io_in[19],
+		io_in[20], io_in[21], 7'b0} :
+	{io_in[16], io_in[17], io_in[18], io_in[19], io_in[20],
+		io_in[21], 4'b0};	// Left shifted
 
-    assign gpio_west = 	// I/O 22 to 29
-	(gpio_input_slice == 0) ? 22'b0 :	// No pad input
+    assign gpio_west = 	// I/O 22 to 31
+	(gpio_input_slice == 0) ? 50'b0 :	// No pad input
 	(gpio_input_slice == 1) ?	// Distributed
-		{io_in[22], 3'b0, io_in[23], 3'b0, io_in[24], 3'b0,
-		 io_in[25],  3'b0, io_in[26],  3'b0, io_in[27], 3'b0,
-		 io_in[28],  3'b0, io_in[29], 1'b0} :
-	(gpio_input_slice == 2) ?		// Bottom shifted
-		 {22'b0, io_in[22], io_in[23], io_in[24], io_in[25],
-		  io_in[26], io_in[27], io_in[28], io_in[29]} :
-	(gpio_input_slice == 3) ?		// Centered
-		 {11'b0, io_in[22], io_in[23], io_in[24], io_in[25],
-		  io_in[26], io_in[27], io_in[28], io_in[29], 11'b0} :
+		{2'b0, io_in[22], 4'b0, io_in[23], 4'b0, io_in[24],
+		 4'b0, io_in[25], 4'b0, io_in[26], 4'b0, io_in[27],
+		 4'b0, io_in[28], 4'b0, io_in[29], 4'b0, io_in[30],
+		 4'b0, io_in[31],  2'b0} :
+	(gpio_input_slice == 2) ?	// Bottom shifted
+		{40'b0, io_in[22], io_in[23], io_in[24], io_in[25],
+		io_in[26], io_in[27], io_in[28], io_in[29], io_in[31],
+		io_in[31]} :
+	(gpio_input_slice == 3) ?	// Centered
+		{20'b0, io_in[22], io_in[23], io_in[24], io_in[25],
+		io_in[26], io_in[27], io_in[28], io_in[29], io_in[31],
+		io_in[31], 20'b0} :
 	{io_in[22], io_in[23], io_in[24], io_in[25], io_in[26],
-		io_in[27], io_in[28], io_in[29], 22'b0};	// Top shifted
+		io_in[27], io_in[28], io_in[29], io_in[31], io_in[31],
+		40'b0};					// Top shifted
 
-    assign gpio_south = 	// I/O 30 to 37
-	(gpio_input_slice == 0) ? 22'b0 :	// No pad input
+    assign gpio_south = 	// I/O 32 to 37
+	(gpio_input_slice == 0) ? 30'b0 :	// No pad input
 	(gpio_input_slice == 1) ?	// Distributed
-		{io_in[37], 3'b0, io_in[36], 3'b0, io_in[35], 3'b0,
-		 io_in[34],  3'b0, io_in[33],  3'b0, io_in[32], 3'b0,
-		 io_in[31],  3'b0, io_in[30], 1'b0} :
-	(gpio_input_slice == 2) ? {22'b0, io_in[37:30]} :	// Right shifted
-	(gpio_input_slice == 3) ? {11'b0, io_in[37:30], 11'b0} : // Centered
-	{io_in[37:30], 22'b0};					// Left shifted
+		{2'b0, io_in[37], 4'b0, io_in[36], 4'b0, io_in[35],
+		 4'b0, io_in[34], 4'b0, io_in[33], 4'b0, io_in[32], 2'b0} :
+	(gpio_input_slice == 2) ? {14'b0, io_in[37:32]} :	// Right shifted
+	(gpio_input_slice == 3) ? {7'b0, io_in[37:32], 7'b0} :	// Centered
+	{io_in[37:32], 14'b0};					// Left shifted
 
     // East side
     assign io_out[6] =
-	(gpio_output_slice == 0) ? data_out_east[0] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_east[11] :	// Center
-	(gpio_output_slice == 2) ? data_out_east[22] :	// Top
+	(gpio_output_slice == 0) ? data_out_east[2] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_east[20] :	// Center
+	(gpio_output_slice == 2) ? data_out_east[40] :	// Top
 	data_out_east[0];				// Bottom
     assign io_out[7] =
-	(gpio_output_slice == 0) ? data_out_east[4] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_east[12] :	// Center
-	(gpio_output_slice == 2) ? data_out_east[23] :	// Top
+	(gpio_output_slice == 0) ? data_out_east[7] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_east[21] :	// Center
+	(gpio_output_slice == 2) ? data_out_east[41] :	// Top
 	data_out_east[1];				// Bottom
     assign io_out[8] =
-	(gpio_output_slice == 0) ? data_out_east[8] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_east[13] :	// Center
-	(gpio_output_slice == 2) ? data_out_east[24] :	// Top
+	(gpio_output_slice == 0) ? data_out_east[12] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_east[22] :	// Center
+	(gpio_output_slice == 2) ? data_out_east[42] :	// Top
 	data_out_east[2];				// Bottom
     assign io_out[9] =
-	(gpio_output_slice == 0) ? data_out_east[12] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_east[14] :	// Center
-	(gpio_output_slice == 2) ? data_out_east[25] :	// Top
+	(gpio_output_slice == 0) ? data_out_east[17] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_east[23] :	// Center
+	(gpio_output_slice == 2) ? data_out_east[43] :	// Top
 	data_out_east[3];				// Bottom
     assign io_out[10] =
-	(gpio_output_slice == 0) ? data_out_east[16] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_east[15] :	// Center
-	(gpio_output_slice == 2) ? data_out_east[26] :	// Top
+	(gpio_output_slice == 0) ? data_out_east[22] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_east[24] :	// Center
+	(gpio_output_slice == 2) ? data_out_east[44] :	// Top
 	data_out_east[4];				// Bottom
     assign io_out[11] =
-	(gpio_output_slice == 0) ? data_out_east[20] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_east[16] :	// Center
-	(gpio_output_slice == 2) ? data_out_east[27] :	// Top
+	(gpio_output_slice == 0) ? data_out_east[27] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_east[25] :	// Center
+	(gpio_output_slice == 2) ? data_out_east[45] :	// Top
 	data_out_east[5];				// Bottom
     assign io_out[12] =
-	(gpio_output_slice == 0) ? data_out_east[24] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_east[17] :	// Center
-	(gpio_output_slice == 2) ? data_out_east[28] :	// Top
+	(gpio_output_slice == 0) ? data_out_east[32] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_east[26] :	// Center
+	(gpio_output_slice == 2) ? data_out_east[46] :	// Top
 	data_out_east[6];				// Bottom
     assign io_out[13] =
-	(gpio_output_slice == 0) ? data_out_east[28] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_east[18] :	// Center
-	(gpio_output_slice == 2) ? data_out_east[29] :	// Top
+	(gpio_output_slice == 0) ? data_out_east[37] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_east[27] :	// Center
+	(gpio_output_slice == 2) ? data_out_east[47] :	// Top
 	data_out_east[7];				// Bottom
+    assign io_out[14] =
+	(gpio_output_slice == 0) ? data_out_east[42] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_east[28] :	// Center
+	(gpio_output_slice == 2) ? data_out_east[48] :	// Top
+	data_out_east[8];				// Bottom
+    assign io_out[15] =
+	(gpio_output_slice == 0) ? data_out_east[47] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_east[29] :	// Center
+	(gpio_output_slice == 2) ? data_out_east[49] :	// Top
+	data_out_east[9];				// Bottom
 
     // North side
-    assign io_out[14] =
-	(gpio_output_slice == 0) ? data_out_north[28] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_north[18] :	// Center
-	(gpio_output_slice == 2) ? data_out_north[29] :	// Top
-	data_out_north[7];				// Bottom
-    assign io_out[15] =
-	(gpio_output_slice == 0) ? data_out_north[24] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_north[17] :	// Center
-	(gpio_output_slice == 2) ? data_out_north[28] :	// Top
-	data_out_north[6];				// Bottom
     assign io_out[16] =
-	(gpio_output_slice == 0) ? data_out_north[20] :	// Distributed
+	(gpio_output_slice == 0) ? data_out_north[27] :	// Distributed
 	(gpio_output_slice == 1) ? data_out_north[16] :	// Center
-	(gpio_output_slice == 2) ? data_out_north[27] :	// Right
+	(gpio_output_slice == 2) ? data_out_north[29] :	// Right
 	data_out_north[5];				// Left
     assign io_out[17] =
-	(gpio_output_slice == 0) ? data_out_north[16] :	// Distributed
+	(gpio_output_slice == 0) ? data_out_north[22] :	// Distributed
 	(gpio_output_slice == 1) ? data_out_north[15] :	// Center
-	(gpio_output_slice == 2) ? data_out_north[26] :	// Right
+	(gpio_output_slice == 2) ? data_out_north[28] :	// Right
 	data_out_north[4];				// Left
     assign io_out[18] =
-	(gpio_output_slice == 0) ? data_out_north[12] :	// Distributed
+	(gpio_output_slice == 0) ? data_out_north[17] :	// Distributed
 	(gpio_output_slice == 1) ? data_out_north[14] :	// Center
-	(gpio_output_slice == 2) ? data_out_north[25] :	// Right
+	(gpio_output_slice == 2) ? data_out_north[27] :	// Right
 	data_out_north[3];				// Left
     assign io_out[19] =
-	(gpio_output_slice == 0) ? data_out_north[8] :	// Distributed
+	(gpio_output_slice == 0) ? data_out_north[12] :	// Distributed
 	(gpio_output_slice == 1) ? data_out_north[13] :	// Center
-	(gpio_output_slice == 2) ? data_out_north[24] :	// Right
+	(gpio_output_slice == 2) ? data_out_north[26] :	// Right
 	data_out_north[2];				// Left
     assign io_out[20] =
-	(gpio_output_slice == 0) ? data_out_north[4] :	// Distributed
+	(gpio_output_slice == 0) ? data_out_north[7] :	// Distributed
 	(gpio_output_slice == 1) ? data_out_north[12] :	// Center
-	(gpio_output_slice == 2) ? data_out_north[23] :	// Right
+	(gpio_output_slice == 2) ? data_out_north[25] :	// Right
 	data_out_north[1];				// Left
     assign io_out[21] =
-	(gpio_output_slice == 0) ? data_out_north[0] :	// Distributed
+	(gpio_output_slice == 0) ? data_out_north[2] :	// Distributed
 	(gpio_output_slice == 1) ? data_out_north[11] :	// Center
-	(gpio_output_slice == 2) ? data_out_north[22] :	// Right
+	(gpio_output_slice == 2) ? data_out_north[24] :	// Right
 	data_out_north[0];				// Left
 
     // West side
     assign io_out[22] =
-	(gpio_output_slice == 0) ? data_out_west[28] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_west[18] :	// Center
-	(gpio_output_slice == 2) ? data_out_west[29] :	// Top
-	data_out_west[7];				// Bottom
+	(gpio_output_slice == 0) ? data_out_west[47] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_west[29] :	// Center
+	(gpio_output_slice == 2) ? data_out_west[49] :	// Top
+	data_out_west[9];				// Bottom
     assign io_out[23] =
-	(gpio_output_slice == 0) ? data_out_west[24] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_west[17] :	// Center
-	(gpio_output_slice == 2) ? data_out_west[28] :	// Top
-	data_out_west[6];				// Bottom
+	(gpio_output_slice == 0) ? data_out_west[42] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_west[28] :	// Center
+	(gpio_output_slice == 2) ? data_out_west[48] :	// Top
+	data_out_west[8];				// Bottom
     assign io_out[24] =
-	(gpio_output_slice == 0) ? data_out_west[20] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_west[16] :	// Center
-	(gpio_output_slice == 2) ? data_out_west[27] :	// Top
-	data_out_west[5];				// Bottom
+	(gpio_output_slice == 0) ? data_out_west[37] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_west[27] :	// Center
+	(gpio_output_slice == 2) ? data_out_west[47] :	// Top
+	data_out_west[7];				// Bottom
     assign io_out[25] =
-	(gpio_output_slice == 0) ? data_out_west[16] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_west[15] :	// Center
-	(gpio_output_slice == 2) ? data_out_west[26] :	// Top
-	data_out_west[4];				// Bottom
+	(gpio_output_slice == 0) ? data_out_west[32] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_west[26] :	// Center
+	(gpio_output_slice == 2) ? data_out_west[46] :	// Top
+	data_out_west[6];				// Bottom
     assign io_out[26] =
-	(gpio_output_slice == 0) ? data_out_west[12] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_west[14] :	// Center
-	(gpio_output_slice == 2) ? data_out_west[25] :	// Top
-	data_out_west[3];				// Bottom
+	(gpio_output_slice == 0) ? data_out_west[27] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_west[25] :	// Center
+	(gpio_output_slice == 2) ? data_out_west[45] :	// Top
+	data_out_west[5];				// Bottom
     assign io_out[27] =
-	(gpio_output_slice == 0) ? data_out_west[8] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_west[13] :	// Center
-	(gpio_output_slice == 2) ? data_out_west[24] :	// Top
-	data_out_west[2];				// Bottom
+	(gpio_output_slice == 0) ? data_out_west[22] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_west[24] :	// Center
+	(gpio_output_slice == 2) ? data_out_west[44] :	// Top
+	data_out_west[4];				// Bottom
     assign io_out[28] =
-	(gpio_output_slice == 0) ? data_out_west[4] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_west[12] :	// Center
-	(gpio_output_slice == 2) ? data_out_west[23] :	// Top
-	data_out_west[1];				// Bottom
+	(gpio_output_slice == 0) ? data_out_west[17] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_west[23] :	// Center
+	(gpio_output_slice == 2) ? data_out_west[43] :	// Top
+	data_out_west[3];				// Bottom
     assign io_out[29] =
-	(gpio_output_slice == 0) ? data_out_west[0] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_west[11] :	// Center
-	(gpio_output_slice == 2) ? data_out_west[22] :	// Top
+	(gpio_output_slice == 0) ? data_out_west[12] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_west[22] :	// Center
+	(gpio_output_slice == 2) ? data_out_west[42] :	// Top
+	data_out_west[2];				// Bottom
+    assign io_out[30] =
+	(gpio_output_slice == 0) ? data_out_west[7] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_west[21] :	// Center
+	(gpio_output_slice == 2) ? data_out_west[41] :	// Top
+	data_out_west[1];				// Bottom
+    assign io_out[31] =
+	(gpio_output_slice == 0) ? data_out_west[2] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_west[20] :	// Center
+	(gpio_output_slice == 2) ? data_out_west[40] :	// Top
 	data_out_west[0];				// Bottom
 
     // South side
-    assign io_out[30] =
-	(gpio_output_slice == 0) ? data_out_south[0] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_south[11] :	// Center
-	(gpio_output_slice == 2) ? data_out_south[22] :	// Top
-	data_out_south[0];				// Bottom
-    assign io_out[31] =
-	(gpio_output_slice == 0) ? data_out_south[4] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_south[12] :	// Center
-	(gpio_output_slice == 2) ? data_out_south[23] :	// Top
-	data_out_south[1];				// Bottom
     assign io_out[32] =
-	(gpio_output_slice == 0) ? data_out_south[8] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_south[13] :	// Center
+	(gpio_output_slice == 0) ? data_out_south[2] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_south[11] :	// Center
 	(gpio_output_slice == 2) ? data_out_south[24] :	// Right
-	data_out_south[2];				// Left
+	data_out_south[0];				// Left
     assign io_out[33] =
-	(gpio_output_slice == 0) ? data_out_south[12] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_south[14] :	// Center
+	(gpio_output_slice == 0) ? data_out_south[7] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_south[12] :	// Center
 	(gpio_output_slice == 2) ? data_out_south[25] :	// Right
-	data_out_south[3];				// Left
+	data_out_south[1];				// Left
     assign io_out[34] =
-	(gpio_output_slice == 0) ? data_out_south[16] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_south[15] :	// Center
+	(gpio_output_slice == 0) ? data_out_south[12] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_south[13] :	// Center
 	(gpio_output_slice == 2) ? data_out_south[26] :	// Right
-	data_out_south[4];				// Left
+	data_out_south[2];				// Left
     assign io_out[35] =
-	(gpio_output_slice == 0) ? data_out_south[20] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_south[16] :	// Center
+	(gpio_output_slice == 0) ? data_out_south[17] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_south[14] :	// Center
 	(gpio_output_slice == 2) ? data_out_south[27] :	// Right
-	data_out_south[5];				// Left
+	data_out_south[3];				// Left
     assign io_out[36] =
-	(gpio_output_slice == 0) ? data_out_south[24] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_south[17] :	// Center
+	(gpio_output_slice == 0) ? data_out_south[22] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_south[15] :	// Center
 	(gpio_output_slice == 2) ? data_out_south[28] :	// Right
-	data_out_south[6];				// Left
+	data_out_south[4];				// Left
     assign io_out[37] =
-	(gpio_output_slice == 0) ? data_out_south[28] :	// Distributed
-	(gpio_output_slice == 1) ? data_out_south[18] :	// Center
+	(gpio_output_slice == 0) ? data_out_south[27] :	// Distributed
+	(gpio_output_slice == 1) ? data_out_south[16] :	// Center
 	(gpio_output_slice == 2) ? data_out_south[29] :	// Right
-	data_out_south[7];				// Left
+	data_out_south[5];				// Left
 
     // Map the output data from the sides to a single array that can be
     // broken up into 32 bit segments for data transfer.  
@@ -651,7 +651,9 @@ module user_project_wrapper #(
 	end else if (data_sel[2]) begin
 	    rdata_pre = data_out[95:64];
 	end else if (data_sel[3]) begin
-	    rdata_pre = {8'b0, data_out[119:96]};
+	    rdata_pre = data_out[127:96];
+	end else if (data_sel[4]) begin
+	    rdata_pre = data_out[159:128];
 	end
     end
 
@@ -754,6 +756,12 @@ module user_project_wrapper #(
                     if (iomem_we[0]) latched_in[103:96] <= wbs_dat_i[7:0];
                     if (iomem_we[1]) latched_in[111:104] <= wbs_dat_i[15:8];
                     if (iomem_we[2]) latched_in[119:112] <= wbs_dat_i[23:16];
+                    if (iomem_we[3]) latched_in[127:120] <= wbs_dat_i[31:24];
+		end else if (data_sel[4]) begin
+                    if (iomem_we[0]) latched_in[135:128] <= wbs_dat_i[7:0];
+                    if (iomem_we[1]) latched_in[143:136] <= wbs_dat_i[15:8];
+                    if (iomem_we[2]) latched_in[151:144] <= wbs_dat_i[23:16];
+                    if (iomem_we[3]) latched_in[159:152] <= wbs_dat_i[31:24];
                 end
             end else begin
                 xfer_ctrl <= 0;      // Immediately self-resetting

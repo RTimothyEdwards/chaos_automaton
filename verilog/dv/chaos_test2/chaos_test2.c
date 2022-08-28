@@ -35,7 +35,6 @@
 #define reg_user_data1 (*(volatile uint32_t*)0x3000001c)
 #define reg_user_data2 (*(volatile uint32_t*)0x30000020)
 #define reg_user_data3 (*(volatile uint32_t*)0x30000024)
-#define reg_user_data4 (*(volatile uint32_t*)0x30000028)
 
 /* Configuration further refined to each LUT (16 bits per LUT) */
 #define reg_user_config_N (*(volatile uint16_t*)0x30000000)
